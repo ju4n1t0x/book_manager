@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [Ejercicio 7]
+
+- Se crea main.py que arma los repositorios, los servicios y la consola.
+- main(import_default_data=True) o el parámetro --importar cargan los datos iniciales.
+
 ## [Ejercicio 6]
 
 - Se crea la consola con el menú principal y un menú CRUD por entidad.
