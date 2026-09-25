@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [Ejercicio 2]
+
+- Se crea la clase base EntidadBase con el id de las entidades.
+- Se crean las entidades Genero, Editorial, Moneda, TipoCotizacion, Libro, Precio, Stock y CotizacionDolar.
+- Los atributos son privados y se acceden con properties que validan los datos.
+- Libro se relaciona con Editorial y Genero; Precio con Libro y Moneda; Stock con Libro; CotizacionDolar con TipoCotizacion.
+
 ## [Ejercicio 1]
 
 - Se crea el repositorio remoto y se sincroniza con el local.
