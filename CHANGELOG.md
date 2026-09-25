@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [Ejercicio 6]
+
+- Se crea la consola con el menú principal y un menú CRUD por entidad.
+- Se agrega el decorador manejar_errores para mostrar los errores sin cortar el programa.
+- Se agregan las funciones para pedir datos por teclado con validación.
+- Se agrega el menú de reportes: cotización de un libro, catálogo en pesos, stock bajo e histórico de cotizaciones.
+- Al iniciar se actualizan las cotizaciones del día desde DolarApi.
+
 ## [Ejercicio 5]
 
 - Se crean los archivos de migración en migrations/csv.
