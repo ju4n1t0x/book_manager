@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [Ejercicio 4]
+
+- Se crea ServicioCrud con las operaciones comunes y un servicio por entidad con sus validaciones.
+- No se pueden borrar géneros, editoriales, monedas o tipos de cotización que estén en uso.
+- Al borrar un libro se borran también sus precios y su stock.
+- Se agrega DolarApi para consultar las cotizaciones del día con urllib.
+- Se agrega CotizadorService para calcular el precio de los libros en pesos según cada tipo de dólar.
+- Se agrega ReporteService con los reportes del sistema.
+
 ## [Ejercicio 3]
 
 - Se agregan las interfaces IRepositorio, IRepositorioStock e IRepositorioCotizacionDolar.
