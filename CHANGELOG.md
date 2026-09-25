@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [Ejercicio 3]
+
+- Se agregan las interfaces IRepositorio, IRepositorioStock e IRepositorioCotizacionDolar.
+- Se crea ArchivoCSV para leer y escribir los archivos de datos.
+- Se crea RepositorioCSV, un repositorio genérico con el CRUD completo sobre un CSV.
+- Se crean los repositorios de cada entidad y los de Stock y CotizacionDolar.
+- Se agrega la clase Repositorios que arma todos los repositorios en orden.
+
 ## [Ejercicio 2]
 
 - Se crea la clase base EntidadBase con el id de las entidades.
