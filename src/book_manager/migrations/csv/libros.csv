@@ -1,0 +1,13 @@
+id,isbn,titulo,autor,editorial_id,genero_id,anio_publicacion
+1,9788468778938,Cien años de soledad,Gabriel García Márquez,1,1,1967
+2,9789878792170,Rayuela,Julio Cortázar,2,1,1963
+3,9788432180965,Ficciones,Jorge Luis Borges,1,2,1944
+4,9788469290811,El túnel,Ernesto Sabato,3,1,1948
+5,9789500339070,Harry Potter y la piedra filosofal,J. K. Rowling,4,4,1997
+6,9788437938349,El principito,Antoine de Saint-Exupéry,4,4,1943
+7,9788460174684,Sapiens. De animales a dioses,Yuval Noah Harari,5,3,2011
+8,9789504538400,Homo Deus,Yuval Noah Harari,5,3,2015
+9,9789509161467,Fluent Python,Luciano Ramalho,6,5,2015
+10,9789500033077,Learning Python,Mark Lutz,6,5,2013
+11,9788466619349,Bestiario,Julio Cortázar,1,2,1951
+12,9788431450618,Sobre héroes y tumbas,Ernesto Sabato,3,1,1961

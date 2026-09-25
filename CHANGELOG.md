@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [Ejercicio 5]
+
+- Se crean los archivos de migración en migrations/csv.
+- Las cotizaciones iniciales son reales, tomadas de api.argentinadatos.com.
+- Se crea importar_datos en preload_data.py que carga los CSV en los repositorios.
+- Se cargan los datos iniciales en la carpeta data.
+
 ## [Ejercicio 4]
 
 - Se crea ServicioCrud con las operaciones comunes y un servicio por entidad con sus validaciones.
