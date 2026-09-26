@@ -1,8 +1,54 @@
----
+# CHANGELOG
 
-# Dia 1: ejercicio 1.
+## [Ejercicio 7]
 
-    - Creamos el repositorio remoto
-    - Sincronizamos el repositorio remoto al origin
-    - Creamos la estructura de carpetas del proyecto junto con los archivos CANGELOG.md, README.mg y requirements.txt
-    - hacemos el primer commit
+- Se crea main.py que arma los repositorios, los servicios y la consola.
+- main(import_default_data=True) o el parámetro --importar cargan los datos iniciales.
+
+## [Ejercicio 6]
+
+- Se crea la consola con el menú principal y un menú CRUD por entidad.
+- Se agrega el decorador manejar_errores para mostrar los errores sin cortar el programa.
+- Se agregan las funciones para pedir datos por teclado con validación.
+- Se agrega el menú de reportes: cotización de un libro, catálogo en pesos, stock bajo e histórico de cotizaciones.
+- Al iniciar se actualizan las cotizaciones del día desde DolarApi.
+
+## [Ejercicio 5]
+
+- Se crean los archivos de migración en migrations/csv.
+- Las cotizaciones iniciales son reales, tomadas de api.argentinadatos.com.
+- Se crea importar_datos en preload_data.py que carga los CSV en los repositorios.
+- Se cargan los datos iniciales en la carpeta data.
+
+## [Ejercicio 4]
+
+- Se crea ServicioCrud con las operaciones comunes y un servicio por entidad con sus validaciones.
+- No se pueden borrar géneros, editoriales, monedas o tipos de cotización que estén en uso.
+- Al borrar un libro se borran también sus precios y su stock.
+- Se agrega DolarApi para consultar las cotizaciones del día con urllib.
+- Se agrega CotizadorService para calcular el precio de los libros en pesos según cada tipo de dólar.
+- Se agrega ReporteService con los reportes del sistema.
+
+## [Ejercicio 3]
+
+- Se agregan las interfaces IRepositorio, IRepositorioStock e IRepositorioCotizacionDolar.
+- Se crea ArchivoCSV para leer y escribir los archivos de datos.
+- Se crea RepositorioCSV, un repositorio genérico con el CRUD completo sobre un CSV.
+- Se crean los repositorios de cada entidad y los de Stock y CotizacionDolar.
+- Se agrega la clase Repositorios que arma todos los repositorios en orden.
+
+## [Ejercicio 2]
+
+- Se crea la clase base EntidadBase con el id de las entidades.
+- Se crean las entidades Genero, Editorial, Moneda, TipoCotizacion, Libro, Precio, Stock y CotizacionDolar.
+- Los atributos son privados y se acceden con properties que validan los datos.
+- Libro se relaciona con Editorial y Genero; Precio con Libro y Moneda; Stock con Libro; CotizacionDolar con TipoCotizacion.
+
+## [Ejercicio 1]
+
+- Se crea el repositorio remoto y se sincroniza con el local.
+- Se crea la rama Sprint_1.
+- Se arma la estructura de carpetas del proyecto con los archivos CHANGELOG.md, README.md y requirements.txt.
+- Se corrige la estructura: `repositories/repositories.py` y la carpeta `migrations/csv`.
+- Se agrega la carpeta `data` donde se guardan los datos del sistema.
+- Se completa el README con el objetivo y el contexto del sprint.
