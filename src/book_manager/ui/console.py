@@ -5,7 +5,7 @@ import functools
 from enum import IntEnum
 from typing import Any, Callable, Optional
 
-from book_manager.entities.entities import Libro, Moneda, Precio, TipoCotizacion
+from book_manager.entities.entities import Editorial, Genero, Libro, Moneda, Precio, TipoCotizacion
 from book_manager.services.services import ServicioCrud, Servicios
 
 
@@ -298,17 +298,85 @@ class Consola:
             self._s.libros.eliminar(libro.id)
             print("\nLibro eliminado.")
 
-    # Géneros y editoriales
+    # Géneros
 
-    @manejar_errores
     def _menu_generos(self) -> None:
-        """Menú CRUD de géneros (mismo esquema que el de monedas)."""
-        raise NotImplementedError
+        self._menu_crud(
+            "Géneros",
+            self._listar_generos,
+            self._alta_genero,
+            self._modificar_genero,
+            self._baja_genero,
+        )
 
     @manejar_errores
+    def _listar_generos(self) -> None:
+        mostrar_tabla(
+            ["Id", "Nombre"],
+            [[g.id, g.nombre] for g in self._s.generos.listar()],
+        )
+
+    @manejar_errores
+    def _alta_genero(self) -> None:
+        print("\nNuevo género")
+        nombre = pedir_texto("Nombre del género")
+        genero = self._s.generos.crear(Genero(0, nombre))
+        print(f"\nGénero creado con id {genero.id}.")
+
+    @manejar_errores
+    def _modificar_genero(self) -> None:
+        genero = self._s.generos.buscar(pedir_entero("Id del género a modificar"))
+        print("Enter para mantener el valor actual.")
+        nombre = pedir_texto("Nombre", genero.nombre)
+        self._s.generos.actualizar(Genero(genero.id, nombre))
+        print("\nGénero actualizado.")
+
+    @manejar_errores
+    def _baja_genero(self) -> None:
+        genero = self._s.generos.buscar(pedir_entero("Id del género a eliminar"))
+        if confirmar(f"¿Eliminar el género '{genero.nombre}'?"):
+            self._s.generos.eliminar(genero.id)
+            print("\nGénero eliminado.")
+
+    # Editoriales
+
     def _menu_editoriales(self) -> None:
-        """Menú CRUD de editoriales (mismo esquema que el de monedas)."""
-        raise NotImplementedError
+        self._menu_crud(
+            "Editoriales",
+            self._listar_editoriales,
+            self._alta_editorial,
+            self._modificar_editorial,
+            self._baja_editorial,
+        )
+
+    @manejar_errores
+    def _listar_editoriales(self) -> None:
+        mostrar_tabla(
+            ["Id", "Nombre"],
+            [[e.id, e.nombre] for e in self._s.editoriales.listar()],
+        )
+
+    @manejar_errores
+    def _alta_editorial(self) -> None:
+        print("\nNueva editorial")
+        nombre = pedir_texto("Nombre de la editorial")
+        editorial = self._s.editoriales.crear(Editorial(0, nombre))
+        print(f"\nEditorial creada con id {editorial.id}.")
+
+    @manejar_errores
+    def _modificar_editorial(self) -> None:
+        editorial = self._s.editoriales.buscar(pedir_entero("Id de la editorial a modificar"))
+        print("Enter para mantener el valor actual.")
+        nombre = pedir_texto("Nombre", editorial.nombre)
+        self._s.editoriales.actualizar(Editorial(editorial.id, nombre))
+        print("\nEditorial actualizada.")
+
+    @manejar_errores
+    def _baja_editorial(self) -> None:
+        editorial = self._s.editoriales.buscar(pedir_entero("Id de la editorial a eliminar"))
+        if confirmar(f"¿Eliminar la editorial '{editorial.nombre}'?"):
+            self._s.editoriales.eliminar(editorial.id)
+            print("\nEditorial eliminada.")
 
     # Monedas
 

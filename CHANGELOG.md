@@ -7,6 +7,7 @@
 
 ## [Ejercicio 6]
 
+- Implementación completa de las interfaces gráficas de consola (CLI) para la gestión CRUD de todas las entidades (Libros, Géneros, Editoriales, Monedas, Precios, Stock, Cotizaciones y Reportes).
 - Se crea la consola con el menú principal y un menú CRUD por entidad.
 - Se agrega el decorador manejar_errores para mostrar los errores sin cortar el programa.
 - Se agregan las funciones para pedir datos por teclado con validación.

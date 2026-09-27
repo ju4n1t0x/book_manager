@@ -1,6 +1,12 @@
 """Punto de entrada del sistema Book Manager."""
 
+from pathlib import Path
 import sys
+
+
+src_path = Path(__file__).resolve().parent.parent
+if str(src_path) not in sys.path:
+    sys.path.insert(0, str(src_path))
 
 from book_manager.preload_data.preload_data import importar_datos
 from book_manager.repositories.repositories import Repositorios
