@@ -1,6 +1,6 @@
 # Book Manager
 
-Trabajo Práctico Integrador - Seminario de Actualización. Hola
+Trabajo Práctico Integrador - Seminario de Actualización.
 
 ## Sprint actual: Sprint 1
 
