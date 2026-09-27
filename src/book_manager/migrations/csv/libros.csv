@@ -11,3 +11,8 @@ id,isbn,titulo,autor,editorial_id,genero_id,anio_publicacion
 10,9789500033077,Learning Python,Mark Lutz,6,5,2013
 11,9788466619349,Bestiario,Julio Cortázar,1,2,1951
 12,9788431450618,Sobre héroes y tumbas,Ernesto Sabato,3,1,1961
+13,9780571394777,Ariel,Sylvia Plath,10,6,1965
+14,9788433941848,Sontag,Benjamin Moser,8,7,2020
+15,9788408074014,La increíble historia de la humanidad. De la Edad de Piedra a nuestros tiempos,James C. Davis,7,8,2007
+16,9780571360550,Being You,Anil Seth,10,9,2021
+17,9783518293263,Geschichte der Moralphilosophie,John Rawls,9,10,2004
