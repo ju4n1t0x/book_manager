@@ -1,3 +1,11 @@
 id,codigo,nombre,simbolo
 1,ARS,Peso argentino,$
 2,USD,Dólar estadounidense,US$
+3,BRL,Real brasileño,R$
+4,CLP,Peso chileno,$
+5,UYU,Peso uruguayo,$U
+6,MXN,Peso mexicano,MEX$
+7,EUR,Euro,€
+8,GBP,Libra esterlina,£
+9,JPY,Yen japonés,¥
+10,CAD,Dólar canadiense,C$
