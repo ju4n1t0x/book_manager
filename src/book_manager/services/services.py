@@ -261,7 +261,11 @@ class StockService:
         Returns:
             Stock: El stock actualizado.
         """
-        raise NotImplementedError
+        if cantidad <= 0:
+            raise ValueError("La cantidad a reponer debe ser mayor a cero.")
+        stock = self.buscar(libro_id)
+        nuevo = Stock(stock.libro, stock.cantidad + cantidad, stock.cantidad_minima)
+        return self._repositorio.actualizar(nuevo)
 
     def descontar(self, libro_id: int, cantidad: int) -> Stock:
         """Resta unidades del stock de un libro (por ejemplo por una venta).
@@ -273,7 +277,16 @@ class StockService:
         Returns:
             Stock: El stock actualizado.
         """
-        raise NotImplementedError
+        if cantidad <= 0:
+            raise ValueError("La cantidad a descontar debe ser mayor a cero.")
+        stock = self.buscar(libro_id)
+        if cantidad > stock.cantidad:
+            raise ValueError(
+                f"No hay suficiente stock del libro {libro_id}: "
+                f"hay {stock.cantidad} y se quieren descontar {cantidad}."
+            )
+        nuevo = Stock(stock.libro, stock.cantidad - cantidad, stock.cantidad_minima)
+        return self._repositorio.actualizar(nuevo)
 
 
 class CotizacionExterna(NamedTuple):
@@ -491,7 +504,10 @@ class ReporteService:
             List[Stock]: Registros de stock con cantidad <= cantidad_minima,
             ordenados de menor a mayor cantidad.
         """
-        raise NotImplementedError
+        bajos = [
+            stock for stock in self._stock.listar() if stock.cantidad <= stock.cantidad_minima
+        ]
+        return sorted(bajos, key=lambda stock: stock.cantidad)
 
 
 class Servicios:
