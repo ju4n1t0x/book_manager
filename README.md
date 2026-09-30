@@ -51,17 +51,17 @@ book_manager/
 
 ## Cotización del dólar
 
-Las cotizaciones se obtienen de [DolarApi](https://dolarapi.com) usando `urllib` de la librería estándar, así que no hace falta instalar nada. Si no hay conexión se usa la última cotización guardada.
+Las cotizaciones se obtienen de [DolarApi](https://dolarapi.com) usando urllib de la librería estándar, así que no hace falta instalar nada. Si no hay conexión se usa la última cotización guardada.
 
 ## Ejecución
 
-Desde la carpeta `src`:
+Desde la carpeta src:
 
 ```bash
 python -m book_manager.main
 ```
 
-Para volver a cargar los datos iniciales de `preload_data.py` en `migrations/csv` (se pierden los cambios hechos):
+Para volver a cargar los datos iniciales de preload_data.py en migrations/csv (se pierden los cambios hechos):
 
 ```bash
 python -m book_manager.main --importar
