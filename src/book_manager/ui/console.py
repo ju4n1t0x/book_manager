@@ -5,12 +5,19 @@ import functools
 from enum import IntEnum
 from typing import Any, Callable, Optional
 
-from book_manager.entities.entities import Editorial, Genero, Libro, Moneda, Precio, TipoCotizacion
+from book_manager.entities.entities import (
+    Editorial,
+    Genero,
+    Libro,
+    Moneda,
+    Precio,
+    TipoCotizacion,
+)
 from book_manager.services.services import ServicioCrud, Servicios
 
 
 def manejar_errores(funcion: Callable) -> Callable:
-    """Decorador que muestra los errores de validación sin cortar el programa."""
+    """Decorador que muestra los errores sin cortar el programa."""
 
     @functools.wraps(funcion)
     def envoltura(*args: Any, **kwargs: Any) -> Any:
@@ -25,12 +32,15 @@ def manejar_errores(funcion: Callable) -> Callable:
     return envoltura
 
 
-def pedir_texto(mensaje: str, actual: Optional[str] = None, obligatorio: bool = True) -> str:
+def pedir_texto(
+    mensaje: str, actual: Optional[str] = None, obligatorio: bool = True
+) -> str:
     """Pide un texto por teclado.
 
     Args:
         mensaje (str): Texto que se muestra al usuario.
-        actual (Optional[str]): Valor actual; si se pasa, con Enter se mantiene.
+        actual (Optional[str]): Valor actual; si se pasa, con Enter se
+            mantiene.
         obligatorio (bool): Si es False se acepta un texto vacío.
 
     Returns:
@@ -47,7 +57,7 @@ def pedir_texto(mensaje: str, actual: Optional[str] = None, obligatorio: bool = 
 
 
 def pedir_entero(mensaje: str, actual: Optional[int] = None) -> int:
-    """Pide un número entero; vuelve a preguntar si lo ingresado no es válido."""
+    """Pide un número entero y repregunta si lo ingresado no es válido."""
     while True:
         valor = pedir_texto(mensaje, None if actual is None else str(actual))
         try:
@@ -66,8 +76,13 @@ def pedir_decimal(mensaje: str, actual: Optional[float] = None) -> float:
             print("Ingresá un número, por ejemplo 1250.50")
 
 
-def pedir_fecha(mensaje: str, actual: Optional[datetime.date] = None) -> datetime.date:
-    """Pide una fecha con formato AAAA-MM-DD. Si no hay valor actual, Enter es hoy."""
+def pedir_fecha(
+    mensaje: str, actual: Optional[datetime.date] = None
+) -> datetime.date:
+    """Pide una fecha con formato AAAA-MM-DD.
+
+    Si no hay valor actual, con Enter se toma la fecha de hoy.
+    """
     actual = actual or datetime.date.today()
     while True:
         valor = pedir_texto(f"{mensaje} (AAAA-MM-DD)", actual.isoformat())
@@ -213,21 +228,25 @@ class Consola:
                     baja()
                 case "0":
                     return
-                case _ if opcion.isdigit() and 5 <= int(opcion) < 5 + len(extras):
+                case _ if opcion.isdigit() and 5 <= int(opcion) < 5 + len(
+                    extras
+                ):
                     extras[int(opcion) - 5][1]()
                 case _:
                     print("Opción inválida.")
 
     @staticmethod
-    def _elegir(servicio: ServicioCrud, titulo: str, actual: Optional[Any] = None) -> Any:
+    def _elegir(
+        servicio: ServicioCrud, titulo: str, actual: Optional[Any] = None
+    ) -> Any:
         """Muestra los registros de un servicio y pide el id de uno."""
         print(f"\nOpciones de {titulo.lower()}:")
         for entidad in servicio.listar():
             print(f"  {entidad.id}. {entidad}")
-        id = pedir_entero(f"Id de {titulo.lower()}", None if actual is None else actual.id)
+        id = pedir_entero(
+            f"Id de {titulo.lower()}", None if actual is None else actual.id
+        )
         return servicio.buscar(id)
-
-    # Libros
 
     def _menu_libros(self) -> None:
         self._menu_crud(
@@ -275,7 +294,9 @@ class Consola:
         anio = pedir_entero("Año de publicación")
         editorial = self._elegir(self._s.editoriales, "Editorial")
         genero = self._elegir(self._s.generos, "Género")
-        libro = self._s.libros.crear(Libro(0, isbn, titulo, autor, editorial, genero, anio))
+        libro = self._s.libros.crear(
+            Libro(0, isbn, titulo, autor, editorial, genero, anio)
+        )
         print(f"\nLibro creado con id {libro.id}.")
 
     @manejar_errores
@@ -286,19 +307,23 @@ class Consola:
         titulo = pedir_texto("Título", libro.titulo)
         autor = pedir_texto("Autor", libro.autor)
         anio = pedir_entero("Año de publicación", libro.anio_publicacion)
-        editorial = self._elegir(self._s.editoriales, "Editorial", libro.editorial)
+        editorial = self._elegir(
+            self._s.editoriales, "Editorial", libro.editorial
+        )
         genero = self._elegir(self._s.generos, "Género", libro.genero)
-        self._s.libros.actualizar(Libro(libro.id, isbn, titulo, autor, editorial, genero, anio))
+        self._s.libros.actualizar(
+            Libro(libro.id, isbn, titulo, autor, editorial, genero, anio)
+        )
         print("\nLibro actualizado.")
 
     @manejar_errores
     def _baja_libro(self) -> None:
         libro = self._s.libros.buscar(pedir_entero("Id del libro a eliminar"))
-        if confirmar(f"Se elimina '{libro}' junto con sus precios y stock. ¿Continuar?"):
+        if confirmar(
+            f"Se elimina '{libro}' junto con sus precios y stock. ¿Continuar?"
+        ):
             self._s.libros.eliminar(libro.id)
             print("\nLibro eliminado.")
-
-    # Géneros
 
     def _menu_generos(self) -> None:
         self._menu_crud(
@@ -313,7 +338,10 @@ class Consola:
     def _listar_generos(self) -> None:
         mostrar_tabla(
             ["Id", "Nombre", "Descripción"],
-            [[g.id, g.nombre, g.descripcion] for g in self._s.generos.listar()],
+            [
+                [g.id, g.nombre, g.descripcion]
+                for g in self._s.generos.listar()
+            ],
         )
 
     @manejar_errores
@@ -326,7 +354,9 @@ class Consola:
 
     @manejar_errores
     def _modificar_genero(self) -> None:
-        genero = self._s.generos.buscar(pedir_entero("Id del género a modificar"))
+        genero = self._s.generos.buscar(
+            pedir_entero("Id del género a modificar")
+        )
         print("Enter para mantener el valor actual.")
         nombre = pedir_texto("Nombre", genero.nombre)
         descripcion = pedir_texto("Descripción", genero.descripcion)
@@ -335,12 +365,12 @@ class Consola:
 
     @manejar_errores
     def _baja_genero(self) -> None:
-        genero = self._s.generos.buscar(pedir_entero("Id del género a eliminar"))
+        genero = self._s.generos.buscar(
+            pedir_entero("Id del género a eliminar")
+        )
         if confirmar(f"¿Eliminar el género '{genero.nombre}'?"):
             self._s.generos.eliminar(genero.id)
             print("\nGénero eliminado.")
-
-    # Editoriales
 
     def _menu_editoriales(self) -> None:
         self._menu_crud(
@@ -355,7 +385,10 @@ class Consola:
     def _listar_editoriales(self) -> None:
         mostrar_tabla(
             ["Id", "Nombre", "País", "Sitio web"],
-            [[e.id, e.nombre, e.pais, e.sitio_web] for e in self._s.editoriales.listar()],
+            [
+                [e.id, e.nombre, e.pais, e.sitio_web]
+                for e in self._s.editoriales.listar()
+            ],
         )
 
     @manejar_errores
@@ -364,27 +397,33 @@ class Consola:
         nombre = pedir_texto("Nombre de la editorial")
         pais = pedir_texto("País")
         sitio_web = pedir_texto("Sitio web", obligatorio=False)
-        editorial = self._s.editoriales.crear(Editorial(0, nombre, pais, sitio_web))
+        editorial = self._s.editoriales.crear(
+            Editorial(0, nombre, pais, sitio_web)
+        )
         print(f"\nEditorial creada con id {editorial.id}.")
 
     @manejar_errores
     def _modificar_editorial(self) -> None:
-        editorial = self._s.editoriales.buscar(pedir_entero("Id de la editorial a modificar"))
+        editorial = self._s.editoriales.buscar(
+            pedir_entero("Id de la editorial a modificar")
+        )
         print("Enter para mantener el valor actual.")
         nombre = pedir_texto("Nombre", editorial.nombre)
         pais = pedir_texto("País", editorial.pais)
         sitio_web = pedir_texto("Sitio web", editorial.sitio_web)
-        self._s.editoriales.actualizar(Editorial(editorial.id, nombre, pais, sitio_web))
+        self._s.editoriales.actualizar(
+            Editorial(editorial.id, nombre, pais, sitio_web)
+        )
         print("\nEditorial actualizada.")
 
     @manejar_errores
     def _baja_editorial(self) -> None:
-        editorial = self._s.editoriales.buscar(pedir_entero("Id de la editorial a eliminar"))
+        editorial = self._s.editoriales.buscar(
+            pedir_entero("Id de la editorial a eliminar")
+        )
         if confirmar(f"¿Eliminar la editorial '{editorial.nombre}'?"):
             self._s.editoriales.eliminar(editorial.id)
             print("\nEditorial eliminada.")
-
-    # Monedas
 
     def _menu_monedas(self) -> None:
         self._menu_crud(
@@ -399,7 +438,10 @@ class Consola:
     def _listar_monedas(self) -> None:
         mostrar_tabla(
             ["Id", "Código", "Nombre", "Símbolo"],
-            [[m.id, m.codigo, m.nombre, m.simbolo] for m in self._s.monedas.listar()],
+            [
+                [m.id, m.codigo, m.nombre, m.simbolo]
+                for m in self._s.monedas.listar()
+            ],
         )
 
     @manejar_errores
@@ -413,7 +455,9 @@ class Consola:
 
     @manejar_errores
     def _modificar_moneda(self) -> None:
-        moneda = self._s.monedas.buscar(pedir_entero("Id de la moneda a modificar"))
+        moneda = self._s.monedas.buscar(
+            pedir_entero("Id de la moneda a modificar")
+        )
         print("Enter para mantener el valor actual.")
         codigo = pedir_texto("Código (3 letras)", moneda.codigo)
         nombre = pedir_texto("Nombre", moneda.nombre)
@@ -423,12 +467,12 @@ class Consola:
 
     @manejar_errores
     def _baja_moneda(self) -> None:
-        moneda = self._s.monedas.buscar(pedir_entero("Id de la moneda a eliminar"))
+        moneda = self._s.monedas.buscar(
+            pedir_entero("Id de la moneda a eliminar")
+        )
         if confirmar(f"¿Eliminar la moneda {moneda}?"):
             self._s.monedas.eliminar(moneda.id)
             print("\nMoneda eliminada.")
-
-    # Precios
 
     def _menu_precios(self) -> None:
         self._menu_crud(
@@ -443,7 +487,10 @@ class Consola:
     def _listar_precios(self) -> None:
         mostrar_tabla(
             ["Id", "Libro", "Moneda", "Monto"],
-            [[p.id, p.libro.titulo, p.moneda.codigo, p] for p in self._s.precios.listar()],
+            [
+                [p.id, p.libro.titulo, p.moneda.codigo, p]
+                for p in self._s.precios.listar()
+            ],
         )
 
     @manejar_errores
@@ -457,21 +504,27 @@ class Consola:
 
     @manejar_errores
     def _modificar_precio(self) -> None:
-        precio = self._s.precios.buscar(pedir_entero("Id del precio a modificar"))
+        precio = self._s.precios.buscar(
+            pedir_entero("Id del precio a modificar")
+        )
         print(f"Libro: {precio.libro}")
         moneda = self._elegir(self._s.monedas, "Moneda", precio.moneda)
         monto = pedir_decimal("Monto", precio.monto)
-        self._s.precios.actualizar(Precio(precio.id, precio.libro, moneda, monto))
+        self._s.precios.actualizar(
+            Precio(precio.id, precio.libro, moneda, monto)
+        )
         print("\nPrecio actualizado.")
 
     @manejar_errores
     def _baja_precio(self) -> None:
-        precio = self._s.precios.buscar(pedir_entero("Id del precio a eliminar"))
-        if confirmar(f"¿Eliminar el precio {precio} de '{precio.libro.titulo}'?"):
+        precio = self._s.precios.buscar(
+            pedir_entero("Id del precio a eliminar")
+        )
+        if confirmar(
+            f"¿Eliminar el precio {precio} de '{precio.libro.titulo}'?"
+        ):
             self._s.precios.eliminar(precio.id)
             print("\nPrecio eliminado.")
-
-    # Stock
 
     def _menu_stock(self) -> None:
         self._menu_crud(
@@ -490,7 +543,10 @@ class Consola:
     def _tabla_stock(registros: list) -> None:
         mostrar_tabla(
             ["Libro", "Título", "Cantidad", "Mínimo"],
-            [[s.libro_id, s.libro.titulo, s.cantidad, s.cantidad_minima] for s in registros],
+            [
+                [s.libro_id, s.libro.titulo, s.cantidad, s.cantidad_minima]
+                for s in registros
+            ],
         )
 
     @manejar_errores
@@ -535,8 +591,6 @@ class Consola:
         stock = self._s.stock.descontar(libro_id, cantidad)
         print(f"\nStock actualizado: {stock}")
 
-    # Tipos de cotización
-
     def _menu_tipos_cotizacion(self) -> None:
         self._menu_crud(
             "Tipos de cotización",
@@ -550,35 +604,47 @@ class Consola:
     def _listar_tipos(self) -> None:
         mostrar_tabla(
             ["Id", "Código", "Nombre"],
-            [[t.id, t.codigo, t.nombre] for t in self._s.tipos_cotizacion.listar()],
+            [
+                [t.id, t.codigo, t.nombre]
+                for t in self._s.tipos_cotizacion.listar()
+            ],
         )
 
     @manejar_errores
     def _alta_tipo(self) -> None:
         print("\nNuevo tipo de cotización")
-        print("El código tiene que coincidir con el de DolarApi para que se actualice solo.")
+        print(
+            "El código tiene que coincidir con el de DolarApi para que se "
+            "actualice solo."
+        )
         codigo = pedir_texto("Código")
         nombre = pedir_texto("Nombre")
-        tipo = self._s.tipos_cotizacion.crear(TipoCotizacion(0, codigo, nombre))
+        tipo = self._s.tipos_cotizacion.crear(
+            TipoCotizacion(0, codigo, nombre)
+        )
         print(f"\nTipo de cotización creado con id {tipo.id}.")
 
     @manejar_errores
     def _modificar_tipo(self) -> None:
-        tipo = self._s.tipos_cotizacion.buscar(pedir_entero("Id del tipo a modificar"))
+        tipo = self._s.tipos_cotizacion.buscar(
+            pedir_entero("Id del tipo a modificar")
+        )
         print("Enter para mantener el valor actual.")
         codigo = pedir_texto("Código", tipo.codigo)
         nombre = pedir_texto("Nombre", tipo.nombre)
-        self._s.tipos_cotizacion.actualizar(TipoCotizacion(tipo.id, codigo, nombre))
+        self._s.tipos_cotizacion.actualizar(
+            TipoCotizacion(tipo.id, codigo, nombre)
+        )
         print("\nTipo de cotización actualizado.")
 
     @manejar_errores
     def _baja_tipo(self) -> None:
-        tipo = self._s.tipos_cotizacion.buscar(pedir_entero("Id del tipo a eliminar"))
+        tipo = self._s.tipos_cotizacion.buscar(
+            pedir_entero("Id del tipo a eliminar")
+        )
         if confirmar(f"¿Eliminar el tipo {tipo}?"):
             self._s.tipos_cotizacion.eliminar(tipo.id)
             print("\nTipo de cotización eliminado.")
-
-    # Cotizaciones
 
     def _menu_cotizaciones(self) -> None:
         self._menu_crud(
@@ -595,7 +661,12 @@ class Consola:
         mostrar_tabla(
             ["Tipo", "Fecha", "Compra", "Venta"],
             [
-                [c.tipo.nombre, c.fecha, formato_pesos(c.compra), formato_pesos(c.venta)]
+                [
+                    c.tipo.nombre,
+                    c.fecha,
+                    formato_pesos(c.compra),
+                    formato_pesos(c.venta),
+                ]
                 for c in cotizaciones
             ],
         )
@@ -640,8 +711,6 @@ class Consola:
         except ConnectionError as error:
             print(f"{error}\nSe usan las últimas cotizaciones guardadas.")
 
-    # Reportes
-
     def _menu_reportes(self) -> None:
         while True:
             print("\n--- Reportes ---")
@@ -673,7 +742,13 @@ class Consola:
         for precio in self._s.precios.precios_de_libro(libro.id):
             print(f"Precio cargado: {precio}")
         mostrar_tabla(
-            ["Cotización", "Fecha", "Venta", "Precio en pesos", "Precio en dólares"],
+            [
+                "Cotización",
+                "Fecha",
+                "Venta",
+                "Precio en pesos",
+                "Precio en dólares",
+            ],
             [
                 [
                     c.tipo.nombre,
@@ -682,7 +757,9 @@ class Consola:
                     formato_pesos(pesos),
                     f"US$ {dolares:,.2f}",
                 ]
-                for c, pesos, dolares in self._s.cotizador.cotizar_libro(libro.id)
+                for c, pesos, dolares in self._s.cotizador.cotizar_libro(
+                    libro.id
+                )
             ],
         )
 

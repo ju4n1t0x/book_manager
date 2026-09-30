@@ -81,18 +81,25 @@ class GeneroService(ServicioCrud[Genero]):
 
     entidad = "el género"
 
-    def __init__(self, repositorio: IRepositorio[Genero], libros: IRepositorio[Libro]) -> None:
+    def __init__(
+        self, repositorio: IRepositorio[Genero], libros: IRepositorio[Libro]
+    ) -> None:
         super().__init__(repositorio)
         self._libros = libros
 
     def _validar(self, entidad: Genero) -> None:
         for genero in self.listar():
-            if genero.id != entidad.id and genero.nombre.lower() == entidad.nombre.lower():
+            if (
+                genero.id != entidad.id
+                and genero.nombre.lower() == entidad.nombre.lower()
+            ):
                 raise ValueError(f"Ya existe el género {entidad.nombre}.")
 
     def _validar_eliminacion(self, id: int) -> None:
         if any(libro.genero.id == id for libro in self._libros.leer_todos()):
-            raise ValueError("No se puede eliminar un género que tiene libros asociados.")
+            raise ValueError(
+                "No se puede eliminar un género que tiene libros asociados."
+            )
 
 
 class EditorialService(ServicioCrud[Editorial]):
@@ -100,18 +107,28 @@ class EditorialService(ServicioCrud[Editorial]):
 
     entidad = "la editorial"
 
-    def __init__(self, repositorio: IRepositorio[Editorial], libros: IRepositorio[Libro]) -> None:
+    def __init__(
+        self, repositorio: IRepositorio[Editorial], libros: IRepositorio[Libro]
+    ) -> None:
         super().__init__(repositorio)
         self._libros = libros
 
     def _validar(self, entidad: Editorial) -> None:
         for editorial in self.listar():
-            if editorial.id != entidad.id and editorial.nombre.lower() == entidad.nombre.lower():
+            if (
+                editorial.id != entidad.id
+                and editorial.nombre.lower() == entidad.nombre.lower()
+            ):
                 raise ValueError(f"Ya existe la editorial {entidad.nombre}.")
 
     def _validar_eliminacion(self, id: int) -> None:
-        if any(libro.editorial.id == id for libro in self._libros.leer_todos()):
-            raise ValueError("No se puede eliminar una editorial que tiene libros asociados.")
+        if any(
+            libro.editorial.id == id for libro in self._libros.leer_todos()
+        ):
+            raise ValueError(
+                "No se puede eliminar una editorial que tiene libros "
+                "asociados."
+            )
 
 
 class MonedaService(ServicioCrud[Moneda]):
@@ -119,12 +136,16 @@ class MonedaService(ServicioCrud[Moneda]):
 
     entidad = "la moneda"
 
-    def __init__(self, repositorio: IRepositorio[Moneda], precios: IRepositorio[Precio]) -> None:
+    def __init__(
+        self, repositorio: IRepositorio[Moneda], precios: IRepositorio[Precio]
+    ) -> None:
         super().__init__(repositorio)
         self._precios = precios
 
     def buscar_por_codigo(self, codigo: str) -> Optional[Moneda]:
-        return next((m for m in self.listar() if m.codigo == codigo.upper()), None)
+        return next(
+            (m for m in self.listar() if m.codigo == codigo.upper()), None
+        )
 
     def _validar(self, entidad: Moneda) -> None:
         existente = self.buscar_por_codigo(entidad.codigo)
@@ -132,8 +153,12 @@ class MonedaService(ServicioCrud[Moneda]):
             raise ValueError(f"Ya existe la moneda {entidad.codigo}.")
 
     def _validar_eliminacion(self, id: int) -> None:
-        if any(precio.moneda.id == id for precio in self._precios.leer_todos()):
-            raise ValueError("No se puede eliminar una moneda que se usa en algún precio.")
+        if any(
+            precio.moneda.id == id for precio in self._precios.leer_todos()
+        ):
+            raise ValueError(
+                "No se puede eliminar una moneda que se usa en algún precio."
+            )
 
 
 class TipoCotizacionService(ServicioCrud[TipoCotizacion]):
@@ -150,16 +175,22 @@ class TipoCotizacionService(ServicioCrud[TipoCotizacion]):
         self._cotizaciones = cotizaciones
 
     def buscar_por_codigo(self, codigo: str) -> Optional[TipoCotizacion]:
-        return next((t for t in self.listar() if t.codigo == codigo.lower()), None)
+        return next(
+            (t for t in self.listar() if t.codigo == codigo.lower()), None
+        )
 
     def _validar(self, entidad: TipoCotizacion) -> None:
         existente = self.buscar_por_codigo(entidad.codigo)
         if existente is not None and existente.id != entidad.id:
-            raise ValueError(f"Ya existe el tipo de cotización con código {entidad.codigo}.")
+            raise ValueError(
+                f"Ya existe el tipo de cotización con código {entidad.codigo}."
+            )
 
     def _validar_eliminacion(self, id: int) -> None:
         if self._cotizaciones.leer_historico_por_tipo(id):
-            raise ValueError("No se puede eliminar un tipo que tiene cotizaciones cargadas.")
+            raise ValueError(
+                "No se puede eliminar un tipo que tiene cotizaciones cargadas."
+            )
 
 
 class LibroService(ServicioCrud[Libro]):
@@ -179,12 +210,16 @@ class LibroService(ServicioCrud[Libro]):
 
     def buscar_por_titulo(self, texto: str) -> List[Libro]:
         texto = texto.lower()
-        return [libro for libro in self.listar() if texto in libro.titulo.lower()]
+        return [
+            libro for libro in self.listar() if texto in libro.titulo.lower()
+        ]
 
     def _validar(self, entidad: Libro) -> None:
         for libro in self.listar():
             if libro.id != entidad.id and libro.isbn == entidad.isbn:
-                raise ValueError(f"Ya existe un libro con el ISBN {entidad.isbn}.")
+                raise ValueError(
+                    f"Ya existe un libro con el ISBN {entidad.isbn}."
+                )
 
     def eliminar(self, id: int) -> None:
         """Elimina el libro junto con sus precios y su stock."""
@@ -196,7 +231,10 @@ class LibroService(ServicioCrud[Libro]):
 
 
 class PrecioService(ServicioCrud[Precio]):
-    """Lógica de los precios. Un libro tiene como máximo un precio por moneda."""
+    """Lógica de los precios.
+
+    Un libro tiene como máximo un precio por moneda.
+    """
 
     entidad = "el precio"
 
@@ -209,16 +247,22 @@ class PrecioService(ServicioCrud[Precio]):
 
     def _validar(self, entidad: Precio) -> None:
         for precio in self.precios_de_libro(entidad.libro.id):
-            if precio.id != entidad.id and precio.moneda.id == entidad.moneda.id:
+            if (
+                precio.id != entidad.id
+                and precio.moneda.id == entidad.moneda.id
+            ):
                 raise ValueError(
-                    f"El libro ya tiene un precio en {entidad.moneda.codigo}, modificá ese."
+                    "El libro ya tiene un precio en "
+                    f"{entidad.moneda.codigo}, modificá ese."
                 )
 
 
 class StockService:
     """Lógica del stock de los libros."""
 
-    def __init__(self, repositorio: IRepositorioStock, libros: IRepositorio[Libro]) -> None:
+    def __init__(
+        self, repositorio: IRepositorioStock, libros: IRepositorio[Libro]
+    ) -> None:
         self._repositorio = repositorio
         self._libros = libros
 
@@ -236,13 +280,17 @@ class StockService:
             raise ValueError(f"El libro {libro_id} no tiene stock cargado.")
         return stock
 
-    def crear(self, libro_id: int, cantidad: int, cantidad_minima: int) -> Stock:
+    def crear(
+        self, libro_id: int, cantidad: int, cantidad_minima: int
+    ) -> Stock:
         libro = self._libros.leer_por_id(libro_id)
         if libro is None:
             raise ValueError(f"No existe un libro con id {libro_id}.")
         return self._repositorio.crear(Stock(libro, cantidad, cantidad_minima))
 
-    def actualizar(self, libro_id: int, cantidad: int, cantidad_minima: int) -> Stock:
+    def actualizar(
+        self, libro_id: int, cantidad: int, cantidad_minima: int
+    ) -> Stock:
         stock = self.buscar(libro_id)
         nuevo = Stock(stock.libro, cantidad, cantidad_minima)
         return self._repositorio.actualizar(nuevo)
@@ -252,7 +300,7 @@ class StockService:
             raise ValueError(f"El libro {libro_id} no tiene stock cargado.")
 
     def reponer(self, libro_id: int, cantidad: int) -> Stock:
-        """Suma unidades al stock de un libro (por ejemplo cuando llega un pedido).
+        """Suma unidades al stock de un libro, por ejemplo por un pedido.
 
         Args:
             libro_id (int): Id del libro.
@@ -264,7 +312,9 @@ class StockService:
         if cantidad <= 0:
             raise ValueError("La cantidad a reponer debe ser mayor a cero.")
         stock = self.buscar(libro_id)
-        nuevo = Stock(stock.libro, stock.cantidad + cantidad, stock.cantidad_minima)
+        nuevo = Stock(
+            stock.libro, stock.cantidad + cantidad, stock.cantidad_minima
+        )
         return self._repositorio.actualizar(nuevo)
 
     def descontar(self, libro_id: int, cantidad: int) -> Stock:
@@ -285,7 +335,9 @@ class StockService:
                 f"No hay suficiente stock del libro {libro_id}: "
                 f"hay {stock.cantidad} y se quieren descontar {cantidad}."
             )
-        nuevo = Stock(stock.libro, stock.cantidad - cantidad, stock.cantidad_minima)
+        nuevo = Stock(
+            stock.libro, stock.cantidad - cantidad, stock.cantidad_minima
+        )
         return self._repositorio.actualizar(nuevo)
 
 
@@ -318,17 +370,32 @@ class DolarApi(ProveedorCotizaciones):
         self._timeout = timeout
 
     def obtener(self) -> List[CotizacionExterna]:
-        # Sin User-Agent la API responde 403, por eso se arma el Request a mano
-        pedido = urllib.request.Request(self.URL, headers={"User-Agent": "book-manager"})
-        try:
-            with urllib.request.urlopen(pedido, timeout=self._timeout) as respuesta:
-                datos = json.load(respuesta)
-        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as error:
-            raise ConnectionError(f"No se pudo consultar DolarApi: {error}") from error
+        """Consulta la API y devuelve una cotización por cada tipo de dólar.
 
-        # La API devuelve una lista de diccionarios, uno por cada tipo de dólar
+        La API responde 403 si el pedido no tiene User-Agent, por eso se arma
+        el Request con ese encabezado.
+        """
+        pedido = urllib.request.Request(
+            self.URL, headers={"User-Agent": "book-manager"}
+        )
+        try:
+            with urllib.request.urlopen(
+                pedido, timeout=self._timeout
+            ) as respuesta:
+                datos = json.load(respuesta)
+        except (
+            urllib.error.URLError,
+            TimeoutError,
+            json.JSONDecodeError,
+        ) as error:
+            raise ConnectionError(
+                f"No se pudo consultar DolarApi: {error}"
+            ) from error
+
         return [
-            CotizacionExterna(dato["casa"], float(dato["compra"]), float(dato["venta"]))
+            CotizacionExterna(
+                dato["casa"], float(dato["compra"]), float(dato["venta"])
+            )
             for dato in datos
             if dato.get("compra") and dato.get("venta")
         ]
@@ -355,21 +422,30 @@ class CotizacionService:
         return self._repositorio.leer_historico_por_tipo(tipo_id)
 
     def ultima(self, tipo_id: int) -> Optional[CotizacionDolar]:
-        """Devuelve la cotización más reciente de un tipo, o None si no hay ninguna."""
+        """Devuelve la cotización más reciente de un tipo.
+
+        Returns:
+            Optional[CotizacionDolar]: La cotización, o None si no hay
+                ninguna.
+        """
         historico = self._repositorio.leer_historico_por_tipo(tipo_id)
         return historico[-1] if historico else None
 
     def buscar(self, tipo_id: int, fecha: datetime.date) -> CotizacionDolar:
         cotizacion = self._repositorio.leer_por_tipo_y_fecha(tipo_id, fecha)
         if cotizacion is None:
-            raise ValueError(f"No hay cotización del tipo {tipo_id} para el {fecha}.")
+            raise ValueError(
+                f"No hay cotización del tipo {tipo_id} para el {fecha}."
+            )
         return cotizacion
 
     def crear(
         self, tipo_id: int, fecha: datetime.date, compra: float, venta: float
     ) -> CotizacionDolar:
         tipo = self._tipos.buscar(tipo_id)
-        return self._repositorio.crear(CotizacionDolar(tipo, fecha, compra, venta))
+        return self._repositorio.crear(
+            CotizacionDolar(tipo, fecha, compra, venta)
+        )
 
     def actualizar(
         self, tipo_id: int, fecha: datetime.date, compra: float, venta: float
@@ -380,7 +456,9 @@ class CotizacionService:
 
     def eliminar(self, tipo_id: int, fecha: datetime.date) -> None:
         if not self._repositorio.eliminar(tipo_id, fecha):
-            raise ValueError(f"No hay cotización del tipo {tipo_id} para el {fecha}.")
+            raise ValueError(
+                f"No hay cotización del tipo {tipo_id} para el {fecha}."
+            )
 
     def actualizar_desde_api(self) -> int:
         """Trae las cotizaciones del día y las guarda.
@@ -400,7 +478,9 @@ class CotizacionService:
             tipo = self._tipos.buscar_por_codigo(externa.codigo)
             if tipo is None:
                 continue
-            cotizacion = CotizacionDolar(tipo, hoy, externa.compra, externa.venta)
+            cotizacion = CotizacionDolar(
+                tipo, hoy, externa.compra, externa.venta
+            )
             if self._repositorio.leer_por_tipo_y_fecha(tipo.id, hoy):
                 self._repositorio.actualizar(cotizacion)
             else:
@@ -423,11 +503,14 @@ class CotizadorService:
         self._tipos = tipos
 
     @staticmethod
-    def a_pesos(precio: Precio, cotizacion: CotizacionDolar) -> Optional[float]:
-        """Convierte un precio a pesos usando el valor de venta de la cotización.
+    def a_pesos(
+        precio: Precio, cotizacion: CotizacionDolar
+    ) -> Optional[float]:
+        """Convierte un precio a pesos con el valor de venta de la cotización.
 
         Returns:
-            Optional[float]: El monto en pesos, o None si la moneda no es ARS ni USD.
+            Optional[float]: El monto en pesos, o None si la moneda no es ARS
+                ni USD.
         """
         match precio.moneda.codigo:
             case "ARS":
@@ -438,20 +521,26 @@ class CotizadorService:
                 return None
 
     def _precio_base(self, libro_id: int) -> Optional[Precio]:
-        # Si el libro tiene precio en dólares se usa ese, porque es el que depende de la cotización
+        """Devuelve el precio que se usa para cotizar el libro.
+
+        Si tiene precio en dólares se usa ese, porque es el que depende de la
+        cotización; si no, el precio en pesos.
+        """
         precios = self._precios.precios_de_libro(libro_id)
         en_dolares = [p for p in precios if p.moneda.codigo == "USD"]
         en_pesos = [p for p in precios if p.moneda.codigo == "ARS"]
         return (en_dolares or en_pesos or [None])[0]
 
-    def cotizar_libro(self, libro_id: int) -> List[tuple[CotizacionDolar, float, float]]:
-        """Devuelve el precio del libro en pesos y en dólares para cada tipo de cotización.
+    def cotizar_libro(
+        self, libro_id: int
+    ) -> List[tuple[CotizacionDolar, float, float]]:
+        """Precio del libro en pesos y en dólares con cada tipo de cotización.
 
         Solo se incluyen los tipos que tienen al menos una cotización cargada.
 
         Returns:
-            List[tuple[CotizacionDolar, float, float]]: Cotización usada, precio en
-            pesos y precio en dólares.
+            List[tuple[CotizacionDolar, float, float]]: Cotización usada,
+                precio en pesos y precio en dólares.
 
         Raises:
             ValueError: Si el libro no tiene precio en ARS ni en USD.
@@ -464,14 +553,17 @@ class CotizadorService:
             cotizacion = self._cotizaciones.ultima(tipo.id)
             if cotizacion is not None:
                 pesos = self.a_pesos(precio, cotizacion)
-                resultado.append((cotizacion, pesos, round(pesos / cotizacion.venta, 2)))
+                resultado.append(
+                    (cotizacion, pesos, round(pesos / cotizacion.venta, 2))
+                )
         return resultado
 
     def precio_en_pesos(self, libro_id: int, tipo_id: int) -> Optional[float]:
         """Precio del libro en pesos con la última cotización de un tipo.
 
         Returns:
-            Optional[float]: El precio, o None si falta el precio o la cotización.
+            Optional[float]: El precio, o None si falta el precio o la
+                cotización.
         """
         precio = self._precio_base(libro_id)
         cotizacion = self._cotizaciones.ultima(tipo_id)
@@ -484,14 +576,19 @@ class ReporteService:
     """Reportes del sistema."""
 
     def __init__(
-        self, libros: LibroService, stock: StockService, cotizador: CotizadorService
+        self,
+        libros: LibroService,
+        stock: StockService,
+        cotizador: CotizadorService,
     ) -> None:
         self._libros = libros
         self._stock = stock
         self._cotizador = cotizador
 
-    def catalogo_en_pesos(self, tipo_id: int) -> List[tuple[Libro, Optional[float]]]:
-        """Lista todos los libros con su precio en pesos según un tipo de cotización."""
+    def catalogo_en_pesos(
+        self, tipo_id: int
+    ) -> List[tuple[Libro, Optional[float]]]:
+        """Lista los libros con su precio en pesos según un tipo de dólar."""
         return [
             (libro, self._cotizador.precio_en_pesos(libro.id, tipo_id))
             for libro in self._libros.listar()
@@ -505,7 +602,9 @@ class ReporteService:
             ordenados de menor a mayor cantidad.
         """
         bajos = [
-            stock for stock in self._stock.listar() if stock.cantidad <= stock.cantidad_minima
+            stock
+            for stock in self._stock.listar()
+            if stock.cantidad <= stock.cantidad_minima
         ]
         return sorted(bajos, key=lambda stock: stock.cantidad)
 
@@ -513,18 +612,28 @@ class ReporteService:
 class Servicios:
     """Crea todos los servicios a partir de los repositorios."""
 
-    def __init__(self, repositorios: Repositorios, proveedor: ProveedorCotizaciones) -> None:
+    def __init__(
+        self, repositorios: Repositorios, proveedor: ProveedorCotizaciones
+    ) -> None:
         self.generos = GeneroService(repositorios.generos, repositorios.libros)
-        self.editoriales = EditorialService(repositorios.editoriales, repositorios.libros)
-        self.monedas = MonedaService(repositorios.monedas, repositorios.precios)
+        self.editoriales = EditorialService(
+            repositorios.editoriales, repositorios.libros
+        )
+        self.monedas = MonedaService(
+            repositorios.monedas, repositorios.precios
+        )
         self.tipos_cotizacion = TipoCotizacionService(
             repositorios.tipos_cotizacion, repositorios.cotizaciones
         )
-        self.libros = LibroService(repositorios.libros, repositorios.precios, repositorios.stock)
+        self.libros = LibroService(
+            repositorios.libros, repositorios.precios, repositorios.stock
+        )
         self.precios = PrecioService(repositorios.precios)
         self.stock = StockService(repositorios.stock, repositorios.libros)
         self.cotizaciones = CotizacionService(
             repositorios.cotizaciones, self.tipos_cotizacion, proveedor
         )
-        self.cotizador = CotizadorService(self.precios, self.cotizaciones, self.tipos_cotizacion)
+        self.cotizador = CotizadorService(
+            self.precios, self.cotizaciones, self.tipos_cotizacion
+        )
         self.reportes = ReporteService(self.libros, self.stock, self.cotizador)
