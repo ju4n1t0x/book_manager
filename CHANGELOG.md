@@ -14,6 +14,7 @@
 - Se agregan las funciones para pedir datos por teclado con validación.
 - Se agrega el menú de reportes: cotización de un libro, catálogo en pesos, stock bajo e histórico de cotizaciones.
 - Al iniciar se actualizan las cotizaciones del día desde DolarApi.
+- Se corrigen el alta y la modificación de editoriales (faltaban país y sitio web) y se agrega la descripción de los géneros.
 
 ## [Ejercicio 5]
 
