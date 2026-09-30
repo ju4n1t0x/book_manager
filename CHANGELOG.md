@@ -3,7 +3,8 @@
 ## [Ejercicio 7]
 
 - Se crea main.py que arma los repositorios, los servicios y la consola.
-- main(import_default_data=True) o el parámetro --importar cargan los datos iniciales.
+- main(import_default_data=True) o el parámetro --importar escriben los datos iniciales en migrations/csv.
+- Se saca el ajuste de sys.path; el programa se ejecuta desde la carpeta src.
 
 ## [Ejercicio 6]
 
@@ -16,10 +17,10 @@
 
 ## [Ejercicio 5]
 
-- Se crean los archivos de migración en migrations/csv.
+- preload_data.py contiene los datos iniciales y cargar_datos_iniciales los escribe en migrations/csv.
+- Se completan géneros, editoriales y monedas hasta 10 registros.
+- Se agregan 5 libros con sus precios y su stock; los precios de esos libros quedan en USD para poder cotizarlos.
 - Las cotizaciones iniciales son reales, tomadas de api.argentinadatos.com.
-- Se crea importar_datos en preload_data.py que carga los CSV en los repositorios.
-- Se cargan los datos iniciales en la carpeta data.
 
 ## [Ejercicio 4]
 
@@ -37,6 +38,7 @@
 - Se crea RepositorioCSV, un repositorio genérico con el CRUD completo sobre un CSV.
 - Se crean los repositorios de cada entidad y los de Stock y CotizacionDolar.
 - Se agrega la clase Repositorios que arma todos los repositorios en orden.
+- Los repositorios guardan los datos en los archivos de migrations/csv.
 
 ## [Ejercicio 2]
 
