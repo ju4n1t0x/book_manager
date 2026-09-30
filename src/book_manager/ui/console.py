@@ -312,15 +312,16 @@ class Consola:
     @manejar_errores
     def _listar_generos(self) -> None:
         mostrar_tabla(
-            ["Id", "Nombre"],
-            [[g.id, g.nombre] for g in self._s.generos.listar()],
+            ["Id", "Nombre", "Descripción"],
+            [[g.id, g.nombre, g.descripcion] for g in self._s.generos.listar()],
         )
 
     @manejar_errores
     def _alta_genero(self) -> None:
         print("\nNuevo género")
         nombre = pedir_texto("Nombre del género")
-        genero = self._s.generos.crear(Genero(0, nombre))
+        descripcion = pedir_texto("Descripción", obligatorio=False)
+        genero = self._s.generos.crear(Genero(0, nombre, descripcion))
         print(f"\nGénero creado con id {genero.id}.")
 
     @manejar_errores
@@ -328,7 +329,8 @@ class Consola:
         genero = self._s.generos.buscar(pedir_entero("Id del género a modificar"))
         print("Enter para mantener el valor actual.")
         nombre = pedir_texto("Nombre", genero.nombre)
-        self._s.generos.actualizar(Genero(genero.id, nombre))
+        descripcion = pedir_texto("Descripción", genero.descripcion)
+        self._s.generos.actualizar(Genero(genero.id, nombre, descripcion))
         print("\nGénero actualizado.")
 
     @manejar_errores
@@ -352,15 +354,17 @@ class Consola:
     @manejar_errores
     def _listar_editoriales(self) -> None:
         mostrar_tabla(
-            ["Id", "Nombre"],
-            [[e.id, e.nombre] for e in self._s.editoriales.listar()],
+            ["Id", "Nombre", "País", "Sitio web"],
+            [[e.id, e.nombre, e.pais, e.sitio_web] for e in self._s.editoriales.listar()],
         )
 
     @manejar_errores
     def _alta_editorial(self) -> None:
         print("\nNueva editorial")
         nombre = pedir_texto("Nombre de la editorial")
-        editorial = self._s.editoriales.crear(Editorial(0, nombre))
+        pais = pedir_texto("País")
+        sitio_web = pedir_texto("Sitio web", obligatorio=False)
+        editorial = self._s.editoriales.crear(Editorial(0, nombre, pais, sitio_web))
         print(f"\nEditorial creada con id {editorial.id}.")
 
     @manejar_errores
@@ -368,7 +372,9 @@ class Consola:
         editorial = self._s.editoriales.buscar(pedir_entero("Id de la editorial a modificar"))
         print("Enter para mantener el valor actual.")
         nombre = pedir_texto("Nombre", editorial.nombre)
-        self._s.editoriales.actualizar(Editorial(editorial.id, nombre))
+        pais = pedir_texto("País", editorial.pais)
+        sitio_web = pedir_texto("Sitio web", editorial.sitio_web)
+        self._s.editoriales.actualizar(Editorial(editorial.id, nombre, pais, sitio_web))
         print("\nEditorial actualizada.")
 
     @manejar_errores

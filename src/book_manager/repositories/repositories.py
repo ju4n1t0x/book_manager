@@ -18,7 +18,7 @@ from book_manager.entities.entities import (
     TipoCotizacion,
 )
 
-DIRECTORIO_DATOS = Path(__file__).resolve().parent.parent / "data"
+DIRECTORIO_DATOS = Path(__file__).resolve().parent.parent / "migrations" / "csv"
 
 T = TypeVar("T", bound=EntidadBase)
 
@@ -311,22 +311,6 @@ class RepositorioCSV(IRepositorio[T]):
         self._guardar()
         return True
 
-    def importar_desde(self, ruta: Path) -> int:
-        """Reemplaza el contenido del repositorio con los datos de otro CSV.
-
-        Args:
-            ruta (Path): Archivo CSV con los mismos campos que el repositorio.
-
-        Returns:
-            int: Cantidad de registros importados.
-        """
-        self._entidades = {}
-        for fila in ArchivoCSV(ruta, self.campos).leer():
-            entidad = self._desde_fila(fila)
-            self._entidades[entidad.id] = entidad
-        self._guardar()
-        return len(self._entidades)
-
 
 class RepositorioGenero(RepositorioCSV[Genero]):
     """Repositorio de géneros."""
@@ -521,15 +505,6 @@ class RepositorioStock(IRepositorioStock):
         self._guardar()
         return True
 
-    def importar_desde(self, ruta: Path) -> int:
-        """Reemplaza el stock con los datos de otro CSV y devuelve la cantidad importada."""
-        self._stock = {}
-        for fila in ArchivoCSV(ruta, self.campos).leer():
-            stock = self._desde_fila(fila)
-            self._stock[stock.libro_id] = stock
-        self._guardar()
-        return len(self._stock)
-
 
 class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
     """Repositorio de cotizaciones guardado en CSV. La clave es (tipo, fecha)."""
@@ -603,15 +578,6 @@ class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
         self._guardar()
         return True
 
-    def importar_desde(self, ruta: Path) -> int:
-        """Reemplaza las cotizaciones con los datos de otro CSV y devuelve la cantidad importada."""
-        self._cotizaciones = {}
-        for fila in ArchivoCSV(ruta, self.campos).leer():
-            cotizacion = self._desde_fila(fila)
-            self._cotizaciones[(cotizacion.tipo_id, cotizacion.fecha)] = cotizacion
-        self._guardar()
-        return len(self._cotizaciones)
-
 
 class Repositorios:
     """Crea todos los repositorios del sistema en el orden correcto.
@@ -631,18 +597,3 @@ class Repositorios:
         self.cotizaciones = RepositorioCotizacionDolar(
             directorio / "cotizaciones.csv", self.tipos_cotizacion
         )
-
-    def en_orden(
-        self,
-    ) -> list[tuple[str, RepositorioCSV | RepositorioStock | RepositorioCotizacionDolar]]:
-        """Devuelve (nombre de archivo, repositorio) respetando las dependencias."""
-        return [
-            ("generos", self.generos),
-            ("editoriales", self.editoriales),
-            ("monedas", self.monedas),
-            ("tipos_cotizacion", self.tipos_cotizacion),
-            ("libros", self.libros),
-            ("precios", self.precios),
-            ("stock", self.stock),
-            ("cotizaciones", self.cotizaciones),
-        ]
