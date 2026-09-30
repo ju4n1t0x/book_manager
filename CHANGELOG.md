@@ -5,6 +5,7 @@
 - Se crea main.py que arma los repositorios, los servicios y la consola.
 - main(import_default_data=True) o el parámetro --importar escriben los datos iniciales en migrations/csv.
 - Se saca el ajuste de sys.path; el programa se ejecuta desde la carpeta src.
+- Se ajusta todo el código a PEP 8 (líneas de hasta 79 caracteres) y los comentarios quedan solo en los docstrings.
 
 ## [Ejercicio 6]
 

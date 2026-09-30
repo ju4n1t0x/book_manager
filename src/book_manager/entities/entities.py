@@ -87,7 +87,9 @@ class Genero(EntidadBase):
 class Editorial(EntidadBase):
     """Proveedor o distribuidora que le vende los libros a la librería."""
 
-    def __init__(self, id: int, nombre: str, pais: str, sitio_web: str = "") -> None:
+    def __init__(
+        self, id: int, nombre: str, pais: str, sitio_web: str = ""
+    ) -> None:
         super().__init__(id)
         self.nombre = nombre
         self.pais = pais
@@ -122,9 +124,14 @@ class Editorial(EntidadBase):
 
 
 class Moneda(EntidadBase):
-    """Moneda en la que se puede expresar un precio."""
+    """Moneda en la que se puede expresar un precio.
 
-    def __init__(self, id: int, codigo: str, nombre: str, simbolo: str) -> None:
+    El código usa el formato ISO 4217: tres letras (ARS, USD, EUR).
+    """
+
+    def __init__(
+        self, id: int, codigo: str, nombre: str, simbolo: str
+    ) -> None:
         super().__init__(id)
         self.codigo = codigo
         self.nombre = nombre
@@ -137,9 +144,10 @@ class Moneda(EntidadBase):
     @codigo.setter
     def codigo(self, valor: str) -> None:
         valor = _validar_texto(valor, "código").upper()
-        # Se usa el formato ISO 4217: tres letras (ARS, USD, EUR...)
         if len(valor) != 3 or not valor.isalpha():
-            raise ValueError("El código de moneda debe tener 3 letras, por ejemplo ARS.")
+            raise ValueError(
+                "El código de moneda debe tener 3 letras, por ejemplo ARS."
+            )
         self._codigo = valor
 
     @property
@@ -165,7 +173,8 @@ class Moneda(EntidadBase):
 class TipoCotizacion(EntidadBase):
     """Tipo de cotización del dólar (Oficial, Blue, MEP, etc.).
 
-    El código coincide con el que usa DolarApi para identificar cada cotización.
+    El código coincide con el que usa DolarApi para identificar cada
+    cotización.
     """
 
     def __init__(self, id: int, codigo: str, nombre: str) -> None:
@@ -279,7 +288,9 @@ class Libro(EntidadBase):
 class Precio(EntidadBase):
     """Precio de un libro expresado en una moneda."""
 
-    def __init__(self, id: int, libro: Libro, moneda: Moneda, monto: float) -> None:
+    def __init__(
+        self, id: int, libro: Libro, moneda: Moneda, monto: float
+    ) -> None:
         super().__init__(id)
         self.libro = libro
         self.moneda = moneda
@@ -320,7 +331,9 @@ class Precio(EntidadBase):
 class Stock:
     """Cantidad disponible de un libro. Se identifica por el libro."""
 
-    def __init__(self, libro: Libro, cantidad: int, cantidad_minima: int = 5) -> None:
+    def __init__(
+        self, libro: Libro, cantidad: int, cantidad_minima: int = 5
+    ) -> None:
         self.libro = libro
         self.cantidad = cantidad
         self.cantidad_minima = cantidad_minima
@@ -366,7 +379,10 @@ class Stock:
 
 
 class CotizacionDolar:
-    """Cotización del dólar para un tipo y una fecha. Se identifica por ambos."""
+    """Cotización del dólar para un tipo y una fecha.
+
+    Se identifica por el par (tipo, fecha).
+    """
 
     def __init__(
         self,

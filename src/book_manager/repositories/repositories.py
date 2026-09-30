@@ -18,13 +18,17 @@ from book_manager.entities.entities import (
     TipoCotizacion,
 )
 
-DIRECTORIO_DATOS = Path(__file__).resolve().parent.parent / "migrations" / "csv"
+DIRECTORIO_DATOS = (
+    Path(__file__).resolve().parent.parent / "migrations" / "csv"
+)
 
 T = TypeVar("T", bound=EntidadBase)
 
 
 class IRepositorio(abc.ABC, Generic[T]):
-    """Interfaz para repositorios que manejan entidades con operaciones CRUD básicas."""
+    """Interfaz para repositorios que manejan entidades con operaciones CRUD
+    básicas.
+    """
 
     @abc.abstractmethod
     def crear(self, entidad: T) -> T:
@@ -116,7 +120,8 @@ class IRepositorioStock(abc.ABC):
             libro_id (int): El ID del libro asociado al stock.
 
         Returns:
-            Optional[Stock]: El objeto Stock si se encuentra, None en caso contrario.
+            Optional[Stock]: El objeto Stock si se encuentra, None en caso
+                contrario.
         """
         pass
 
@@ -125,7 +130,8 @@ class IRepositorioStock(abc.ABC):
         """Actualiza un registro de stock existente.
 
         Args:
-            stock (Stock): El objeto Stock a actualizar (debe tener un libro_id existente).
+            stock (Stock): El objeto Stock a actualizar (debe tener un
+                libro_id existente).
 
         Returns:
             Stock: El objeto Stock actualizado.
@@ -173,11 +179,13 @@ class IRepositorioCotizacionDolar(abc.ABC):
         """Lee una cotización de dólar por tipo y fecha.
 
         Args:
-            tipo_id (int): El ID del tipo de cotización (e.g., 'Oficial', 'Blue').
+            tipo_id (int): El ID del tipo de cotización (e.g., 'Oficial',
+                'Blue').
             fecha (datetime.date): La fecha de la cotización.
 
         Returns:
-            Optional[CotizacionDolar]: La cotización si se encuentra, None en caso contrario.
+            Optional[CotizacionDolar]: La cotización si se encuentra, None en
+                caso contrario.
         """
         pass
 
@@ -189,7 +197,8 @@ class IRepositorioCotizacionDolar(abc.ABC):
             tipo_id (int): El ID del tipo de cotización.
 
         Returns:
-            List[CotizacionDolar]: Una lista de cotizaciones históricas para el tipo dado.
+            List[CotizacionDolar]: Una lista de cotizaciones históricas para
+                el tipo dado.
         """
         pass
 
@@ -198,7 +207,8 @@ class IRepositorioCotizacionDolar(abc.ABC):
         """Actualiza una cotización de dólar existente.
 
         Args:
-            cotizacion (CotizacionDolar): El objeto CotizacionDolar a actualizar.
+            cotizacion (CotizacionDolar): El objeto CotizacionDolar a
+                actualizar.
 
         Returns:
             CotizacionDolar: El objeto CotizacionDolar actualizado.
@@ -230,7 +240,8 @@ class ArchivoCSV:
         """Devuelve las filas del archivo de a una.
 
         Returns:
-            Iterator[dict[str, str]]: Cada fila como diccionario campo -> valor.
+            Iterator[dict[str, str]]: Cada fila como diccionario
+                campo -> valor.
         """
         if not self._ruta.exists():
             return
@@ -273,7 +284,9 @@ class RepositorioCSV(IRepositorio[T]):
         """Arma la entidad a partir de una fila del CSV."""
 
     def _guardar(self) -> None:
-        self._archivo.escribir([self._a_fila(e) for e in self._entidades.values()])
+        self._archivo.escribir(
+            [self._a_fila(e) for e in self._entidades.values()]
+        )
 
     def _proximo_id(self) -> int:
         return max(self._entidades, default=0) + 1
@@ -294,11 +307,15 @@ class RepositorioCSV(IRepositorio[T]):
         return list(self._entidades.values())
 
     def actualizar(self, entidad: T) -> T:
+        """Actualiza una entidad existente.
+
+        Los datos nuevos se copian sobre el objeto que ya existe, así los
+        objetos que lo referencian (por ejemplo un libro con su género) ven
+        el cambio.
+        """
         actual = self._entidades.get(entidad.id)
         if actual is None:
             raise ValueError(f"No existe un registro con id {entidad.id}.")
-        # Se copian los datos sobre el objeto que ya existe, así los objetos que
-        # lo referencian (por ejemplo un libro con su género) ven el cambio.
         if actual is not entidad:
             vars(actual).update(vars(entidad))
         self._guardar()
@@ -318,7 +335,11 @@ class RepositorioGenero(RepositorioCSV[Genero]):
     campos = ["id", "nombre", "descripcion"]
 
     def _a_fila(self, entidad: Genero) -> dict:
-        return {"id": entidad.id, "nombre": entidad.nombre, "descripcion": entidad.descripcion}
+        return {
+            "id": entidad.id,
+            "nombre": entidad.nombre,
+            "descripcion": entidad.descripcion,
+        }
 
     def _desde_fila(self, fila: dict[str, str]) -> Genero:
         return Genero(int(fila["id"]), fila["nombre"], fila["descripcion"])
@@ -338,7 +359,9 @@ class RepositorioEditorial(RepositorioCSV[Editorial]):
         }
 
     def _desde_fila(self, fila: dict[str, str]) -> Editorial:
-        return Editorial(int(fila["id"]), fila["nombre"], fila["pais"], fila["sitio_web"])
+        return Editorial(
+            int(fila["id"]), fila["nombre"], fila["pais"], fila["sitio_web"]
+        )
 
 
 class RepositorioMoneda(RepositorioCSV[Moneda]):
@@ -355,7 +378,9 @@ class RepositorioMoneda(RepositorioCSV[Moneda]):
         }
 
     def _desde_fila(self, fila: dict[str, str]) -> Moneda:
-        return Moneda(int(fila["id"]), fila["codigo"], fila["nombre"], fila["simbolo"])
+        return Moneda(
+            int(fila["id"]), fila["codigo"], fila["nombre"], fila["simbolo"]
+        )
 
 
 class RepositorioTipoCotizacion(RepositorioCSV[TipoCotizacion]):
@@ -364,7 +389,11 @@ class RepositorioTipoCotizacion(RepositorioCSV[TipoCotizacion]):
     campos = ["id", "codigo", "nombre"]
 
     def _a_fila(self, entidad: TipoCotizacion) -> dict:
-        return {"id": entidad.id, "codigo": entidad.codigo, "nombre": entidad.nombre}
+        return {
+            "id": entidad.id,
+            "codigo": entidad.codigo,
+            "nombre": entidad.nombre,
+        }
 
     def _desde_fila(self, fila: dict[str, str]) -> TipoCotizacion:
         return TipoCotizacion(int(fila["id"]), fila["codigo"], fila["nombre"])
@@ -377,7 +406,15 @@ class RepositorioLibro(RepositorioCSV[Libro]):
     se buscan en sus repositorios para armar el libro completo.
     """
 
-    campos = ["id", "isbn", "titulo", "autor", "editorial_id", "genero_id", "anio_publicacion"]
+    campos = [
+        "id",
+        "isbn",
+        "titulo",
+        "autor",
+        "editorial_id",
+        "genero_id",
+        "anio_publicacion",
+    ]
 
     def __init__(
         self,
@@ -405,7 +442,8 @@ class RepositorioLibro(RepositorioCSV[Libro]):
         genero = self._generos.leer_por_id(int(fila["genero_id"]))
         if editorial is None or genero is None:
             raise ValueError(
-                f"El libro {fila['id']} tiene una editorial o un género que no existe."
+                f"El libro {fila['id']} tiene una editorial o un género "
+                "que no existe."
             )
         return Libro(
             int(fila["id"]),
@@ -423,7 +461,9 @@ class RepositorioPrecio(RepositorioCSV[Precio]):
 
     campos = ["id", "libro_id", "moneda_id", "monto"]
 
-    def __init__(self, ruta: Path, libros: RepositorioLibro, monedas: RepositorioMoneda) -> None:
+    def __init__(
+        self, ruta: Path, libros: RepositorioLibro, monedas: RepositorioMoneda
+    ) -> None:
         self._libros = libros
         self._monedas = monedas
         super().__init__(ruta)
@@ -440,7 +480,10 @@ class RepositorioPrecio(RepositorioCSV[Precio]):
         libro = self._libros.leer_por_id(int(fila["libro_id"]))
         moneda = self._monedas.leer_por_id(int(fila["moneda_id"]))
         if libro is None or moneda is None:
-            raise ValueError(f"El precio {fila['id']} tiene un libro o una moneda que no existe.")
+            raise ValueError(
+                f"El precio {fila['id']} tiene un libro o una moneda "
+                "que no existe."
+            )
         return Precio(int(fila["id"]), libro, moneda, float(fila["monto"]))
 
     def leer_por_libro(self, libro_id: int) -> List[Precio]:
@@ -471,15 +514,22 @@ class RepositorioStock(IRepositorioStock):
     def _desde_fila(self, fila: dict[str, str]) -> Stock:
         libro = self._libros.leer_por_id(int(fila["libro_id"]))
         if libro is None:
-            raise ValueError(f"Hay stock cargado para el libro {fila['libro_id']} que no existe.")
-        return Stock(libro, int(fila["cantidad"]), int(fila["cantidad_minima"]))
+            raise ValueError(
+                f"Hay stock cargado para el libro {fila['libro_id']} "
+                "que no existe."
+            )
+        return Stock(
+            libro, int(fila["cantidad"]), int(fila["cantidad_minima"])
+        )
 
     def _guardar(self) -> None:
         self._archivo.escribir([self._a_fila(s) for s in self._stock.values()])
 
     def crear(self, stock: Stock) -> Stock:
         if stock.libro_id in self._stock:
-            raise ValueError(f"Ya hay stock cargado para el libro {stock.libro_id}.")
+            raise ValueError(
+                f"Ya hay stock cargado para el libro {stock.libro_id}."
+            )
         self._stock[stock.libro_id] = stock
         self._guardar()
         return stock
@@ -493,7 +543,9 @@ class RepositorioStock(IRepositorioStock):
 
     def actualizar(self, stock: Stock) -> Stock:
         if stock.libro_id not in self._stock:
-            raise ValueError(f"No hay stock cargado para el libro {stock.libro_id}.")
+            raise ValueError(
+                f"No hay stock cargado para el libro {stock.libro_id}."
+            )
         self._stock[stock.libro_id] = stock
         self._guardar()
         return stock
@@ -507,17 +559,24 @@ class RepositorioStock(IRepositorioStock):
 
 
 class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
-    """Repositorio de cotizaciones guardado en CSV. La clave es (tipo, fecha)."""
+    """Repositorio de cotizaciones guardado en CSV.
+
+    La clave es el par (tipo, fecha).
+    """
 
     campos = ["tipo_id", "fecha", "compra", "venta"]
 
     def __init__(self, ruta: Path, tipos: RepositorioTipoCotizacion) -> None:
         self._tipos = tipos
         self._archivo = ArchivoCSV(ruta, self.campos)
-        self._cotizaciones: dict[tuple[int, datetime.date], CotizacionDolar] = {}
+        self._cotizaciones: dict[
+            tuple[int, datetime.date], CotizacionDolar
+        ] = {}
         for fila in self._archivo.leer():
             cotizacion = self._desde_fila(fila)
-            self._cotizaciones[(cotizacion.tipo_id, cotizacion.fecha)] = cotizacion
+            self._cotizaciones[(cotizacion.tipo_id, cotizacion.fecha)] = (
+                cotizacion
+            )
 
     def _a_fila(self, cotizacion: CotizacionDolar) -> dict:
         return {
@@ -530,19 +589,27 @@ class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
     def _desde_fila(self, fila: dict[str, str]) -> CotizacionDolar:
         tipo = self._tipos.leer_por_id(int(fila["tipo_id"]))
         if tipo is None:
-            raise ValueError(f"Hay cotizaciones de un tipo que no existe ({fila['tipo_id']}).")
+            raise ValueError(
+                "Hay cotizaciones de un tipo que no existe "
+                f"({fila['tipo_id']})."
+            )
         fecha = datetime.date.fromisoformat(fila["fecha"])
-        return CotizacionDolar(tipo, fecha, float(fila["compra"]), float(fila["venta"]))
+        return CotizacionDolar(
+            tipo, fecha, float(fila["compra"]), float(fila["venta"])
+        )
 
     def _guardar(self) -> None:
-        ordenadas = sorted(self._cotizaciones.values(), key=lambda c: (c.tipo_id, c.fecha))
+        ordenadas = sorted(
+            self._cotizaciones.values(), key=lambda c: (c.tipo_id, c.fecha)
+        )
         self._archivo.escribir([self._a_fila(c) for c in ordenadas])
 
     def crear(self, cotizacion: CotizacionDolar) -> CotizacionDolar:
         clave = (cotizacion.tipo_id, cotizacion.fecha)
         if clave in self._cotizaciones:
             raise ValueError(
-                f"Ya existe una cotización {cotizacion.tipo.nombre} del {cotizacion.fecha}."
+                f"Ya existe una cotización {cotizacion.tipo.nombre} "
+                f"del {cotizacion.fecha}."
             )
         self._cotizaciones[clave] = cotizacion
         self._guardar()
@@ -554,18 +621,23 @@ class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
         return self._cotizaciones.get((tipo_id, fecha))
 
     def leer_historico_por_tipo(self, tipo_id: int) -> List[CotizacionDolar]:
-        historico = [c for c in self._cotizaciones.values() if c.tipo_id == tipo_id]
+        historico = [
+            c for c in self._cotizaciones.values() if c.tipo_id == tipo_id
+        ]
         return sorted(historico, key=lambda c: c.fecha)
 
     def leer_todos(self) -> List[CotizacionDolar]:
         """Devuelve todas las cotizaciones ordenadas por tipo y fecha."""
-        return sorted(self._cotizaciones.values(), key=lambda c: (c.tipo_id, c.fecha))
+        return sorted(
+            self._cotizaciones.values(), key=lambda c: (c.tipo_id, c.fecha)
+        )
 
     def actualizar(self, cotizacion: CotizacionDolar) -> CotizacionDolar:
         clave = (cotizacion.tipo_id, cotizacion.fecha)
         if clave not in self._cotizaciones:
             raise ValueError(
-                f"No existe una cotización {cotizacion.tipo.nombre} del {cotizacion.fecha}."
+                f"No existe una cotización {cotizacion.tipo.nombre} "
+                f"del {cotizacion.fecha}."
             )
         self._cotizaciones[clave] = cotizacion
         self._guardar()
@@ -590,9 +662,15 @@ class Repositorios:
         self.generos = RepositorioGenero(directorio / "generos.csv")
         self.editoriales = RepositorioEditorial(directorio / "editoriales.csv")
         self.monedas = RepositorioMoneda(directorio / "monedas.csv")
-        self.tipos_cotizacion = RepositorioTipoCotizacion(directorio / "tipos_cotizacion.csv")
-        self.libros = RepositorioLibro(directorio / "libros.csv", self.editoriales, self.generos)
-        self.precios = RepositorioPrecio(directorio / "precios.csv", self.libros, self.monedas)
+        self.tipos_cotizacion = RepositorioTipoCotizacion(
+            directorio / "tipos_cotizacion.csv"
+        )
+        self.libros = RepositorioLibro(
+            directorio / "libros.csv", self.editoriales, self.generos
+        )
+        self.precios = RepositorioPrecio(
+            directorio / "precios.csv", self.libros, self.monedas
+        )
         self.stock = RepositorioStock(directorio / "stock.csv", self.libros)
         self.cotizaciones = RepositorioCotizacionDolar(
             directorio / "cotizaciones.csv", self.tipos_cotizacion

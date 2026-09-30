@@ -1,4 +1,10 @@
-"""Datos iniciales del sistema y su escritura en la carpeta migrations/csv."""
+"""Datos iniciales del sistema y su escritura en la carpeta migrations/csv.
+
+Cada lista tiene los registros de una entidad como tuplas, con los valores
+en el mismo orden que las columnas de su archivo CSV. Los códigos de los
+tipos de cotización son los que usa DolarApi y las cotizaciones son valores
+reales tomados de api.argentinadatos.com.
+"""
 
 from pathlib import Path
 
@@ -25,7 +31,11 @@ GENEROS = [
     (7, "Biografía", "Relatos sobre la vida de una persona"),
     (8, "Historia", "Obras sobre acontecimientos y procesos históricos"),
     (9, "Ciencia", "Libros sobre conocimientos y divulgación científica"),
-    (10, "Filosofía", "Obras sobre pensamiento, ideas y cuestiones filosóficas"),
+    (
+        10,
+        "Filosofía",
+        "Obras sobre pensamiento, ideas y cuestiones filosóficas",
+    ),
 ]
 
 EDITORIALES = [
@@ -54,7 +64,6 @@ MONEDAS = [
     (10, "CAD", "Dólar canadiense", "C$"),
 ]
 
-# El código es el mismo que usa DolarApi para cada tipo de dólar
 TIPOS_COTIZACION = [
     (1, "oficial", "Oficial"),
     (2, "blue", "Blue"),
@@ -68,36 +77,83 @@ TIPOS_COTIZACION = [
     (10, "ahorro", "Ahorro"),
 ]
 
-# id, isbn, título, autor, editorial_id, genero_id, año
 LIBROS = [
-    (1, "9788468778938", "Cien años de soledad", "Gabriel García Márquez", 1, 1, 1967),
+    (
+        1,
+        "9788468778938",
+        "Cien años de soledad",
+        "Gabriel García Márquez",
+        1,
+        1,
+        1967,
+    ),
     (2, "9789878792170", "Rayuela", "Julio Cortázar", 2, 1, 1963),
     (3, "9788432180965", "Ficciones", "Jorge Luis Borges", 1, 2, 1944),
     (4, "9788469290811", "El túnel", "Ernesto Sabato", 3, 1, 1948),
-    (5, "9789500339070", "Harry Potter y la piedra filosofal", "J. K. Rowling", 4, 4, 1997),
-    (6, "9788437938349", "El principito", "Antoine de Saint-Exupéry", 4, 4, 1943),
-    (7, "9788460174684", "Sapiens. De animales a dioses", "Yuval Noah Harari", 5, 3, 2011),
+    (
+        5,
+        "9789500339070",
+        "Harry Potter y la piedra filosofal",
+        "J. K. Rowling",
+        4,
+        4,
+        1997,
+    ),
+    (
+        6,
+        "9788437938349",
+        "El principito",
+        "Antoine de Saint-Exupéry",
+        4,
+        4,
+        1943,
+    ),
+    (
+        7,
+        "9788460174684",
+        "Sapiens. De animales a dioses",
+        "Yuval Noah Harari",
+        5,
+        3,
+        2011,
+    ),
     (8, "9789504538400", "Homo Deus", "Yuval Noah Harari", 5, 3, 2015),
     (9, "9789509161467", "Fluent Python", "Luciano Ramalho", 6, 5, 2015),
     (10, "9789500033077", "Learning Python", "Mark Lutz", 6, 5, 2013),
     (11, "9788466619349", "Bestiario", "Julio Cortázar", 1, 2, 1951),
-    (12, "9788431450618", "Sobre héroes y tumbas", "Ernesto Sabato", 3, 1, 1961),
+    (
+        12,
+        "9788431450618",
+        "Sobre héroes y tumbas",
+        "Ernesto Sabato",
+        3,
+        1,
+        1961,
+    ),
     (13, "9780571394777", "Ariel", "Sylvia Plath", 10, 6, 1965),
     (14, "9788433941848", "Sontag", "Benjamin Moser", 8, 7, 2020),
     (
         15,
         "9788408074014",
-        "La increíble historia de la humanidad. De la Edad de Piedra a nuestros tiempos",
+        "La increíble historia de la humanidad. De la Edad de Piedra a "
+        "nuestros tiempos",
         "James C. Davis",
         7,
         8,
         2007,
     ),
     (16, "9780571360550", "Being You", "Anil Seth", 10, 9, 2021),
-    (17, "9783518293263", "Geschichte der Moralphilosophie", "John Rawls", 9, 10, 2004),
+    (
+        17,
+        "9783518293263",
+        "Geschichte der Moralphilosophie",
+        "John Rawls",
+        9,
+        10,
+        2004,
+    ),
 ]
 
-# id, libro_id, moneda_id, monto (1 = ARS, 2 = USD)
 PRECIOS = [
     (1, 1, 1, 32900),
     (2, 2, 1, 28500),
@@ -118,7 +174,6 @@ PRECIOS = [
     (17, 17, 2, 18.9),
 ]
 
-# libro_id, cantidad, cantidad_minima
 STOCK = [
     (1, 14, 5),
     (2, 3, 5),
@@ -139,7 +194,6 @@ STOCK = [
     (17, 3, 2),
 ]
 
-# tipo_id, fecha, compra, venta (valores reales tomados de api.argentinadatos.com)
 COTIZACIONES = [
     (1, "2026-09-23", 1485, 1535),
     (1, "2026-09-24", 1485, 1535),
@@ -164,7 +218,6 @@ COTIZACIONES = [
     (7, "2026-09-25", 1937, 2002),
 ]
 
-# Nombre del archivo, columnas y registros de cada entidad
 ARCHIVOS = [
     ("generos", RepositorioGenero.campos, GENEROS),
     ("editoriales", RepositorioEditorial.campos, EDITORIALES),
@@ -177,7 +230,9 @@ ARCHIVOS = [
 ]
 
 
-def cargar_datos_iniciales(directorio: Path = DIRECTORIO_DATOS) -> dict[str, int]:
+def cargar_datos_iniciales(
+    directorio: Path = DIRECTORIO_DATOS,
+) -> dict[str, int]:
     """Escribe los datos iniciales en los archivos CSV de migrations/csv.
 
     Los datos que había en esos archivos se reemplazan.

@@ -12,8 +12,9 @@ def main(import_default_data: bool = False) -> None:
     """Arma el sistema y abre el menú de consola.
 
     Args:
-        import_default_data (bool): Si es True, antes de empezar se escriben los
-            datos iniciales en migrations/csv (se pierden los datos actuales).
+        import_default_data (bool): Si es True, antes de empezar se
+            escriben los datos iniciales en migrations/csv (se pierden los
+            datos actuales).
     """
     if import_default_data:
         for archivo, cantidad in cargar_datos_iniciales().items():
