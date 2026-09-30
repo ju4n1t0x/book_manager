@@ -31,6 +31,7 @@
 - Se agrega DolarApi para consultar las cotizaciones del día con urllib.
 - Se agrega CotizadorService para calcular el precio de los libros en pesos según cada tipo de dólar.
 - Se agrega ReporteService con los reportes del sistema.
+- Se agregan los movimientos de stock (reponer y descontar) y el reporte de stock bajo.
 
 ## [Ejercicio 3]
 
