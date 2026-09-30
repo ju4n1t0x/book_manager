@@ -3,7 +3,8 @@
 ## [Ejercicio 7]
 
 - Se crea main.py que arma los repositorios, los servicios y la consola.
-- main(import_default_data=True) o el parámetro --importar cargan los datos iniciales.
+- main(import_default_data=True) o el parámetro --importar escriben los datos iniciales en migrations/csv.
+- Se saca el ajuste de sys.path; el programa se ejecuta desde la carpeta src.
 
 ## [Ejercicio 6]
 
@@ -13,13 +14,14 @@
 - Se agregan las funciones para pedir datos por teclado con validación.
 - Se agrega el menú de reportes: cotización de un libro, catálogo en pesos, stock bajo e histórico de cotizaciones.
 - Al iniciar se actualizan las cotizaciones del día desde DolarApi.
+- Se corrigen el alta y la modificación de editoriales (faltaban país y sitio web) y se agrega la descripción de los géneros.
 
 ## [Ejercicio 5]
 
-- Se crean los archivos de migración en migrations/csv.
+- preload_data.py contiene los datos iniciales y cargar_datos_iniciales los escribe en migrations/csv.
+- Se completan géneros, editoriales y monedas hasta 10 registros.
+- Se agregan 5 libros con sus precios y su stock; los precios de esos libros quedan en USD para poder cotizarlos.
 - Las cotizaciones iniciales son reales, tomadas de api.argentinadatos.com.
-- Se crea importar_datos en preload_data.py que carga los CSV en los repositorios.
-- Se cargan los datos iniciales en la carpeta data.
 
 ## [Ejercicio 4]
 
@@ -29,6 +31,7 @@
 - Se agrega DolarApi para consultar las cotizaciones del día con urllib.
 - Se agrega CotizadorService para calcular el precio de los libros en pesos según cada tipo de dólar.
 - Se agrega ReporteService con los reportes del sistema.
+- Se agregan los movimientos de stock (reponer y descontar) y el reporte de stock bajo.
 
 ## [Ejercicio 3]
 
@@ -37,6 +40,7 @@
 - Se crea RepositorioCSV, un repositorio genérico con el CRUD completo sobre un CSV.
 - Se crean los repositorios de cada entidad y los de Stock y CotizacionDolar.
 - Se agrega la clase Repositorios que arma todos los repositorios en orden.
+- Los repositorios guardan los datos en los archivos de migrations/csv.
 
 ## [Ejercicio 2]
 
@@ -51,5 +55,5 @@
 - Se crea la rama Sprint_1.
 - Se arma la estructura de carpetas del proyecto con los archivos CHANGELOG.md, README.md y requirements.txt.
 - Se corrige la estructura: `repositories/repositories.py` y la carpeta `migrations/csv`.
-- Se agrega la carpeta `data` donde se guardan los datos del sistema.
 - Se completa el README con el objetivo y el contexto del sprint.
+- Se ajusta la estructura a la de la consigna: se quitan la carpeta `data` y los archivos `__init__.py`.

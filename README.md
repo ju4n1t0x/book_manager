@@ -31,13 +31,18 @@ El objetivo del sprint es desarrollar una aplicación de consola (CLI) en Python
 book_manager/
 ├── src/
 │   └── book_manager/
-│       ├── entities/          # clases de dominio
-│       ├── repositories/      # persistencia en archivos CSV
-│       ├── services/          # lógica de negocio y consulta de cotizaciones
-│       ├── preload_data/      # importación de los datos iniciales
-│       ├── migrations/csv/    # archivos CSV con los datos iniciales
-│       ├── data/              # archivos CSV donde se guardan los datos del sistema
-│       ├── ui/                # menús de consola
+│       ├── entities/
+│       │   └── entities.py            # clases de dominio
+│       ├── preload_data/
+│       │   └── preload_data.py        # datos iniciales, se escriben en migrations/csv
+│       ├── repositories/
+│       │   └── repositories.py        # persistencia en los archivos CSV
+│       ├── services/
+│       │   └── services.py            # lógica de negocio y consulta de cotizaciones
+│       ├── migrations
+│       │   └── csv                    # archivos CSV donde se guardan los datos
+│       ├── ui/
+│       │   └── console.py             # menús de consola
 │       └── main.py
 ├── CHANGELOG.md
 ├── README.md
@@ -56,7 +61,7 @@ Desde la carpeta `src`:
 python -m book_manager.main
 ```
 
-Para volver a cargar los datos iniciales desde `migrations/csv`:
+Para volver a cargar los datos iniciales de `preload_data.py` en `migrations/csv` (se pierden los cambios hechos):
 
 ```bash
 python -m book_manager.main --importar
