@@ -1,0 +1,11 @@
+from book_manager.services.crud_services import ServicioCrud
+from book_manager.services.editorial_service import EditorialService
+from book_manager.services.moneda_service import MonedaService
+from book_manager.services.tipo_cotizacion_service import TipoCotizacionService
+from book_manager.services.libro_service import LibroService
+from book_manager.services.precio_service import PrecioService
+from book_manager.services.stock_service import StockService
+from book_manager.services.cotizacion_service import CotizacionService, CotizadorService, ProveedorCotizaciones, DolarApi
+from book_manager.services.genero_service import GeneroService
+from book_manager.services.reporte_service import ReporteService
+from book_manager.services.services import Servicios 

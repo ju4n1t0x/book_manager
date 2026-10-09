@@ -2,17 +2,27 @@
 
 Trabajo Práctico Integrador - Seminario de Actualización.
 
-## Sprint actual: Sprint 1
+## Sprint actual: Sprint 2
 
 ## Objetivo
 
-Aplicar los conocimientos de programación orientada a objetos y de almacenamiento de datos en archivos para su persistencia.
+Persistir los datos en una base de datos relacional utilizando como ORM SQLAlchemy
 
 ## Introducción y contexto
 
-Una librería con venta al público necesita modernizar su sistema de gestión de inventario de libros. Debido a la fluctuación en los costos de importación de material bibliográfico, el sistema debe gestionar precios en diferentes monedas y seguir de cerca la cotización del dólar para actualizar sus valores en tiempo real.
+### Sprint 2
 
-El objetivo del sprint es desarrollar una aplicación de consola (CLI) en Python que permita gestionar el inventario de la librería y cotizar los libros según el valor del dólar. Se toma como referencia el sitio [Cúspide](https://www.cuspide.com/).
+**Desarrollar el sprint 2**
+
+En esta segunda entrega vamos a ampliar el alcance haciendo que nuestra aplicación persista en una base de datos relacional. Para este caso vamos a utilizar el ORM [SQLAlchemy](https://colab.research.google.com/drive/1SKsOF5rdQ-Ul4PnMloZsCsNRO2nWH4KZ).
+
+La idea principal es realizar una migración de todos los datos cargados en los archivos a tablas relacionales.
+
+El objetivo principal es consolidar las bases de manejo de bases de datos, normalización, conexión segura y carga inicial.
+
+Además realizaremos consultas a APIs externas.
+
+Para todo esto debemos partir del último push que se realizó en la entrega 1.
 
 ### Entidades
 
@@ -31,6 +41,8 @@ El objetivo del sprint es desarrollar una aplicación de consola (CLI) en Python
 book_manager/
 ├── src/
 │   └── book_manager/
+│       ├── database/
+│       │   └── connection.py          # conexcion a la base de datos
 │       ├── entities/
 │       │   └── entities.py            # clases de dominio
 │       ├── preload_data/
@@ -39,8 +51,8 @@ book_manager/
 │       │   └── repositories.py        # persistencia en los archivos CSV
 │       ├── services/
 │       │   └── services.py            # lógica de negocio y consulta de cotizaciones
-│       ├── migrations
-│       │   └── csv                    # archivos CSV donde se guardan los datos
+│       ├── migrations/
+│       │   └── csv/                   # archivos CSV donde se guardan los datos
 │       ├── ui/
 │       │   └── console.py             # menús de consola
 │       └── main.py
