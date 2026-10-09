@@ -1,0 +1,11 @@
+from book_manager.repositories.irepositorio import IRepositorio
+from book_manager.repositories.stock_repository import IRepositorioStock, RepositorioStock
+from book_manager.repositories.cotizacion_dolar_repository import IRepositorioCotizacionDolar, RepositorioCotizacionDolar
+from book_manager.repositories.genero_repository import RepositorioGenero
+from book_manager.repositories.archivo_csv_repository import ArchivoCSV, T, RepositorioCSV
+from book_manager.repositories.editorial_repository import RepositorioEditorial
+from book_manager.repositories.moneda_repository import RepositorioMoneda
+from book_manager.repositories.tipo_cotizacion_repository import RepositorioTipoCotizacion
+from book_manager.repositories.libro_repository import RepositorioLibro
+from book_manager.repositories.precio_repository import RepositorioPrecio
+from book_manager.repositories.repositories import Repositorios
