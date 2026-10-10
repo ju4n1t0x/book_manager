@@ -1,8 +1,11 @@
 import os
 
+from contextlib import contextmanager
 from pathlib import Path
+from typing import Iterator
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
+from sqlalchemy.orm import Session
 
 
 class ConexionDB:
@@ -24,6 +27,26 @@ class ConexionDB:
 
     def close(self) -> None:
         self.engine.dispose()
+
+    @contextmanager
+    def transaccion(self) -> Iterator[Session]:
+        """Context manager para manejar una transacción.
+
+        Hace commit si todo sale bien, rollback si hay un error y siempre
+        cierra la sesión.
+
+        Yields:
+            Session: Sesión para hacer las operaciones.
+        """
+        sesion = Session(self.engine, expire_on_commit=False)
+        try:
+            yield sesion
+            sesion.commit()
+        except Exception:
+            sesion.rollback()
+            raise
+        finally:
+            sesion.close()
 
 
 class TestConnection:

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [Ejercicio 3]
+
+- Agregamos a ConexionDB el context manager transaccion para manejar las transacciones.
+- Hace commit si sale todo bien, rollback si hay un error y cierra la sesión.
+
 ## [Ejercicio 1]
 
 - Creamos la rama para el Sprint 2
