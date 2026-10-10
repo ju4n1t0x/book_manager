@@ -45,6 +45,8 @@ book_manager/
 │       │   └── connection.py          # conexcion a la base de datos
 │       ├── entities/
 │       │   └── entities.py            # clases de dominio
+│       ├── models/
+│       │   └── models.py              # tablas de la base de datos (SQLAlchemy)
 │       ├── preload_data/
 │       │   └── preload_data.py        # datos iniciales, se escriben en migrations/csv
 │       ├── repositories/

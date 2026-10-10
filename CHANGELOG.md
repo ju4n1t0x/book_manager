@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [Ejercicio 4]
+
+- Creamos models/models.py con las tablas del sistema usando SQLAlchemy.
+- Las tablas tienen los mismos nombres y columnas que los csv del sprint 1.
+- Agregamos las relaciones entre las tablas y la función crear_tablas.
+
 ## [Ejercicio 3]
 
 - Agregamos a ConexionDB el context manager transaccion para manejar las transacciones.
