@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [Ejercicio 5]
+
+- Creamos migrations/migrations.py con la función migrar_datos.
+- La función lee los csv de migrations/csv y genera un archivo sql por tabla en migrations/sql, respetando el orden de dependencias entre tablas.
+- Cargamos los datos en la base dentro de una transacción y ajustamos las secuencias de los ids para que los próximos altas no se repitan.
+
 ## [Ejercicio 4]
 
 - Creamos models/models.py con las tablas del sistema usando SQLAlchemy.
