@@ -4,12 +4,9 @@ from book_manager.entities import Genero
 from book_manager.models.models import GeneroModelo
 from book_manager.repositories.sqlalchemy_repository import RepositorioSqlAlchemy
 from book_manager.database.connection import ConexionDB
-from book_manager.repositories.irepositorio import IRepositorio
-from abc import ABC
 
-class IRepositorioGenero(IRepositorio[Genero], ABC):
-    """Interfaz del repositorio de géneros."""
-    pass
+
+
 
 class RepositorioGenero(RepositorioSqlAlchemy[Genero, GeneroModelo]):
     """Repositorio de géneros."""

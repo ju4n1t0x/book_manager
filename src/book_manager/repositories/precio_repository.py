@@ -1,12 +1,12 @@
 
 
-from typing import List, Optional
+from typing import List
 from decimal import Decimal
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from abc import ABC, abstractmethod
 from book_manager.entities import Precio
 from book_manager.repositories.sqlalchemy_repository import RepositorioSqlAlchemy
+
 from book_manager.entities import (
     Editorial,
     Genero,
@@ -22,40 +22,7 @@ from book_manager.models.models import (
 )
 
 
-
-class IRepositorioPrecio(ABC):
-    """Interfaz del repositorio de precios."""
-
-    @abstractmethod
-    def crear(self, entidad: Precio) -> Precio:
-        """Crea un nuevo precio en la base de datos."""
-        pass
-
-    @abstractmethod
-    def leer_por_id(self, id: int) -> Optional[Precio]:
-        """Lee un precio por su ID."""
-        pass
-
-    @abstractmethod
-    def actualizar(self, entidad: Precio) -> Precio:
-        """Actualiza un precio existente en la base de datos."""
-        pass
-
-    @abstractmethod
-    def eliminar(self, id: int) -> bool:
-        """Elimina un precio por su ID."""
-        pass
-
-    @abstractmethod
-    def leer_por_libro(
-            self,
-            libro_id: int,
-        ) -> List[Precio]:
-                """Lee todos los precios asociados a un libro por su ID."""
-    pass
-
-
-class RepositorioPrecio(RepositorioSqlAlchemy[Precio, PrecioModelo], IRepositorioPrecio):
+class RepositorioPrecio(RepositorioSqlAlchemy[Precio, PrecioModelo]):
     """Repositorio de precios."""
 
     modelo = PrecioModelo

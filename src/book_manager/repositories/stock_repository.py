@@ -132,7 +132,7 @@ class RepositorioStock(IRepositorioStock):
             if modelo is None:
                 return None
 
-        return  self._a_entidad(modelo)
+            return  self._a_entidad(modelo)
 
     def leer_todos(
             self

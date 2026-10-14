@@ -7,11 +7,12 @@ from sqlalchemy.orm import Session
 from book_manager.database.connection import ConexionDB
 from book_manager.entities import EntidadBase
 from book_manager.models.models import Base
+from book_manager.repositories.irepositorio import IRepositorio
 
 Entidad = TypeVar("Entidad", bound=EntidadBase)
 Modelo = TypeVar("Modelo", bound=Base)
 
-class RepositorioSqlAlchemy(Generic[Entidad, Modelo], ABC):
+class RepositorioSqlAlchemy(IRepositorio[Entidad], Generic[Entidad, Modelo]):
     """Repositorio base para entidades que se almacenan en una base de datos SQL mediante SQLAlchemy.
 
     Las clases concretas heredan el CRUD y definen:
@@ -43,9 +44,9 @@ class RepositorioSqlAlchemy(Generic[Entidad, Modelo], ABC):
     @abstractmethod
     def _actualizar_modelo(
         self,
-        sesion,
-        modelo,
-        entidad
+        sesion: Session,
+        modelo: Modelo,
+        entidad: Entidad
     ) -> None:
         """Actualiza un modelo de SQLAlchemy a partir de una entidad del dominio."""
         

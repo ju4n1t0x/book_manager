@@ -5,11 +5,7 @@ from book_manager.models.models import TipoCotizacionModelo
 from book_manager.entities import TipoCotizacion
 from book_manager.repositories.sqlalchemy_repository import RepositorioSqlAlchemy
 from book_manager.database.connection import ConexionDB
-from book_manager.repositories.irepositorio import IRepositorio
 
-class IRepositorioTipoCotizacion(IRepositorio[TipoCotizacion], ABC):
-    """Interfaz del repositorio de tipos de cotización."""
-    pass
 
 
 class RepositorioTipoCotizacion(RepositorioSqlAlchemy[TipoCotizacion, TipoCotizacionModelo]):

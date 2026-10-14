@@ -4,13 +4,9 @@ from book_manager.entities import Editorial
 from book_manager.models.models import EditorialModelo
 from book_manager.repositories.sqlalchemy_repository import RepositorioSqlAlchemy
 from book_manager.database.connection import ConexionDB
-from book_manager.repositories.irepositorio import IRepositorio
 from abc import ABC
 
 
-class IRepositorioEditorial(IRepositorio[Editorial], ABC):
-    """Interfaz del repositorio de editoriales."""
-    pass
 
 class RepositorioEditorial(RepositorioSqlAlchemy[Editorial, EditorialModelo]):
     """Repositorio de editoriales."""

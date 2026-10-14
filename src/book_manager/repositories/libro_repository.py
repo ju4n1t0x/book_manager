@@ -3,9 +3,7 @@ from abc import ABC, abstractmethod
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from book_manager.repositories.sqlalchemy_repository import RepositorioSqlAlchemy
-from book_manager.database.connection import ConexionDB
 from book_manager.repositories.irepositorio import IRepositorio
-from abc import ABC
 
 
 from book_manager.entities import (
@@ -20,20 +18,16 @@ from book_manager.models.models import(
     EditorialModelo
 )
 
-
 class IRepositorioLibro(IRepositorio[Libro], ABC):
-    """Interfaz del repositorio de libros."""
-
     @abstractmethod
     def leer_por_isbn(
             self,
             isbn: str
     ) -> Optional[Libro]:
         """Lee un libro por su ISBN."""
-    pass
+        pass
 
-
-class RepositorioLibro(RepositorioSqlAlchemy[Libro, LibroModelo]):
+class RepositorioLibro(RepositorioSqlAlchemy[Libro, LibroModelo], IRepositorioLibro):
     """Repositorio de libros.
 
     En el archivo se guardan los ids de la editorial y el género; al leer
@@ -42,9 +36,7 @@ class RepositorioLibro(RepositorioSqlAlchemy[Libro, LibroModelo]):
 
     modelo = LibroModelo
 
-    def __init__(self, conexion: ConexionDB) -> None:
-            super().__init__(conexion)
-
+ 
     def _a_entidad(
             self,
             modelo: LibroModelo

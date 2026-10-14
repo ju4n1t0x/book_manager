@@ -131,17 +131,17 @@ class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
         with self._conexion.transaccion() as sesion:
 
             clave = (
-                cotizacion.tipo_id,
+                cotizacion.tipo.id,
                 cotizacion.fecha
             )
 
             if sesion.get(CotizacionDolarModelo, clave) is not None:
                 raise ValueError(
-                    f"Ya existe una cotización para tipo {cotizacion.tipo_id} "
+                    f"Ya existe una cotización para tipo {cotizacion.tipo.id} "
                 )
 
             modelo = CotizacionDolarModelo(
-                tipo_id=cotizacion.tipo_id,
+                tipo_id=cotizacion.tipo.id,
                 fecha=cotizacion.fecha,
                 compra=Decimal(str(cotizacion.compra)),
                 venta=Decimal(str(cotizacion.venta))

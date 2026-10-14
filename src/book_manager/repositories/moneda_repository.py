@@ -5,13 +5,9 @@ from book_manager.entities import Moneda
 from book_manager.models.models import MonedaModelo
 from book_manager.repositories.sqlalchemy_repository import RepositorioSqlAlchemy
 from book_manager.database.connection import ConexionDB
-from book_manager.repositories.irepositorio import IRepositorio
 from abc import ABC
 
 
-class IRepositorioMoneda(IRepositorio[Moneda], ABC):
-    """Interfaz del repositorio de monedas."""
-    pass
 
 class RepositorioMoneda(RepositorioSqlAlchemy[Moneda, MonedaModelo]):
     """Repositorio de monedas."""
