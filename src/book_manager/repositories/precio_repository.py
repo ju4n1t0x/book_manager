@@ -1,46 +1,211 @@
 
-from pathlib import Path
-from typing import List
 
-from book_manager.repositories.archivo_csv_repository import RepositorioCSV
-from book_manager.repositories.moneda_repository import RepositorioMoneda
-from book_manager.repositories.libro_repository import RepositorioLibro
-
+from typing import List, Optional
+from decimal import Decimal
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+from abc import ABC, abstractmethod
+from book_manager.entities import Precio
+from book_manager.repositories.sqlalchemy_repository import RepositorioSqlAlchemy
 from book_manager.entities import (
-    Precio,
+    Editorial,
+    Genero,
+    Libro,
+    Moneda,
+    Precio
+)
+
+from book_manager.models.models import (
+    LibroModelo,
+    MonedaModelo,
+    PrecioModelo
 )
 
 
-class RepositorioPrecio(RepositorioCSV[Precio]):
+
+class IRepositorioPrecio(ABC):
+    """Interfaz del repositorio de precios."""
+
+    @abstractmethod
+    def crear(self, entidad: Precio) -> Precio:
+        """Crea un nuevo precio en la base de datos."""
+        pass
+
+    @abstractmethod
+    def leer_por_id(self, id: int) -> Optional[Precio]:
+        """Lee un precio por su ID."""
+        pass
+
+    @abstractmethod
+    def actualizar(self, entidad: Precio) -> Precio:
+        """Actualiza un precio existente en la base de datos."""
+        pass
+
+    @abstractmethod
+    def eliminar(self, id: int) -> bool:
+        """Elimina un precio por su ID."""
+        pass
+
+    @abstractmethod
+    def leer_por_libro(
+            self,
+            libro_id: int,
+        ) -> List[Precio]:
+                """Lee todos los precios asociados a un libro por su ID."""
+    pass
+
+
+class RepositorioPrecio(RepositorioSqlAlchemy[Precio, PrecioModelo], IRepositorioPrecio):
     """Repositorio de precios."""
 
-    campos = ["id", "libro_id", "moneda_id", "monto"]
+    modelo = PrecioModelo
 
-    def __init__(
-        self, ruta: Path, libros: RepositorioLibro, monedas: RepositorioMoneda
-    ) -> None:
-        self._libros = libros
-        self._monedas = monedas
-        super().__init__(ruta)
+    def _convertir_libro(
+            self,
+            modelo: LibroModelo
+    ) -> Libro:
+        """Convierte un modelo de SQLAlchemy a una entidad de dominio."""
 
-    def _a_fila(self, entidad: Precio) -> dict:
-        return {
-            "id": entidad.id,
-            "libro_id": entidad.libro.id,
-            "moneda_id": entidad.moneda.id,
-            "monto": entidad.monto,
-        }
+        editorial = Editorial(
+            modelo.editorial.id,
+            modelo.editorial.nombre,
+            modelo.editorial.pais,
+            modelo.editorial.sitio_web
+        )
 
-    def _desde_fila(self, fila: dict[str, str]) -> Precio:
-        libro = self._libros.leer_por_id(int(fila["libro_id"]))
-        moneda = self._monedas.leer_por_id(int(fila["moneda_id"]))
-        if libro is None or moneda is None:
-            raise ValueError(
-                f"El precio {fila['id']} tiene un libro o una moneda "
-                "que no existe."
+        genero = Genero(
+            modelo.genero.id,
+            modelo.genero.nombre,
+            modelo.genero.descripcion
+        )
+
+        return Libro(
+            modelo.id,
+            modelo.isbn,
+            modelo.titulo,
+            modelo.autor,
+            editorial,
+            genero,
+            modelo.anio_publicacion
+        )
+
+    def _convertir_moneda(
+            self,
+            modelo: MonedaModelo            
+    ) -> Moneda:
+        """Convierte un modelo de SQLAlchemy a una entidad de dominio."""
+
+        return Moneda(
+            modelo.id,
+            modelo.codigo,
+            modelo.nombre,
+            modelo.simbolo
+        )
+
+    def _a_entidad(
+            self,
+            modelo: PrecioModelo
+    ) -> Precio:
+        """Convierte un modelo de SQLAlchemy a una entidad de dominio."""
+
+        libro = self._convertir_libro(modelo.libro)
+        moneda = self._convertir_moneda(modelo.moneda)
+
+        return Precio(
+            modelo.id,
+            libro,
+            moneda,
+            float(modelo.monto)
+        )
+
+    def _obtener_libro(
+            self,
+            sesion: Session,
+            libro_id: int
+    ) -> LibroModelo:
+        """Obtiene un modelo de libro por su ID."""
+
+        libro = sesion.get(LibroModelo, libro_id)
+
+        if libro is None:
+            raise ValueError(f"No se encontró el libro con id {libro_id}")
+
+        return libro
+
+    def _obtener_moneda(
+            self,
+            sesion: Session,
+            moneda_id: int
+    ) -> MonedaModelo:
+        """Obtiene un modelo de moneda por su ID."""
+
+        moneda = sesion.get(MonedaModelo, moneda_id)
+
+        if moneda is None:
+            raise ValueError(f"No se encontró la moneda con id {moneda_id}")
+
+        return moneda
+
+    def _crear_modelo(
+            self,
+            sesion: Session,
+            entidad: Precio
+    ) -> PrecioModelo:
+        """Crea un modelo de SQLAlchemy a partir de una entidad de dominio."""
+
+        libro = self._obtener_libro(
+            sesion,
+            entidad.libro.id
             )
-        return Precio(int(fila["id"]), libro, moneda, float(fila["monto"]))
+        moneda = self._obtener_moneda(
+            sesion, 
+            entidad.moneda.id
+            )
 
-    def leer_por_libro(self, libro_id: int) -> List[Precio]:
-        """Devuelve los precios cargados para un libro."""
-        return [p for p in self._entidades.values() if p.libro.id == libro_id]
+        return PrecioModelo(
+            libro=libro,
+            moneda=moneda,
+            monto=entidad.monto
+        )
+
+    def _actualizar_modelo(
+            self,
+            sesion: Session,
+            modelo: PrecioModelo,
+            entidad: Precio
+    ) -> None:
+        """Actualiza un modelo de SQLAlchemy a partir de una entidad de dominio."""
+
+        libro = self._obtener_libro(
+             sesion,
+             entidad.libro.id
+        )
+
+        moneda = self._obtener_moneda(
+            sesion,
+            entidad.moneda.id
+        )
+    
+        modelo.libro_id = libro.id
+        modelo.moneda_id = moneda.id
+        modelo.monto = Decimal(str(entidad.monto))
+
+    def leer_por_libro(
+            self,
+            libro_id: int,
+    ) -> List[Precio]:
+        """Lee todos los precios asociados a un libro por su ID."""
+
+        with self._conexion.transaccion() as sesion:
+            query = (
+                select(PrecioModelo)
+                .where(PrecioModelo.libro_id == libro_id)
+                .order_by(PrecioModelo.id)
+            )
+
+            modelos = sesion.scalars(query).all()
+
+            return[
+                self._a_entidad(modelo)
+                for modelo in modelos
+            ]

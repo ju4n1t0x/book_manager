@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [Ejercicio 6]
+
+- Realizamos la migracion de los repositorios para que empiecen a consumir y persistir los datos directamente en la base de datos de supabase
+- Dejamos la migracion de los archivos csv, solo para que se migren al inciar, pero dejan de tener implementacion en el sistema
+
 ## [Ejercicio 5]
 
 - Creamos migrations/migrations.py con la función migrar_datos.

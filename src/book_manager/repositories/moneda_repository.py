@@ -1,22 +1,62 @@
 
-from book_manager.repositories.archivo_csv_repository import RepositorioCSV
+from sqlalchemy.orm import Session
+
 from book_manager.entities import Moneda
+from book_manager.models.models import MonedaModelo
+from book_manager.repositories.sqlalchemy_repository import RepositorioSqlAlchemy
+from book_manager.database.connection import ConexionDB
+from book_manager.repositories.irepositorio import IRepositorio
+from abc import ABC
 
 
-class RepositorioMoneda(RepositorioCSV[Moneda]):
+class IRepositorioMoneda(IRepositorio[Moneda], ABC):
+    """Interfaz del repositorio de monedas."""
+    pass
+
+class RepositorioMoneda(RepositorioSqlAlchemy[Moneda, MonedaModelo]):
     """Repositorio de monedas."""
 
-    campos = ["id", "codigo", "nombre", "simbolo"]
+    modelo = MonedaModelo
 
-    def _a_fila(self, entidad: Moneda) -> dict:
-        return {
-            "id": entidad.id,
-            "codigo": entidad.codigo,
-            "nombre": entidad.nombre,
-            "simbolo": entidad.simbolo,
-        }
+    """Repositorio de monedas."""
 
-    def _desde_fila(self, fila: dict[str, str]) -> Moneda:
+    def __init__(self, conexion: ConexionDB) -> None:
+            super().__init__(conexion)
+
+    def _a_entidad(
+            self,
+            modelo: MonedaModelo
+    ) -> Moneda:
+        """Convierte un modelo de SQLAlchemy a una entidad de dominio."""
+
         return Moneda(
-            int(fila["id"]), fila["codigo"], fila["nombre"], fila["simbolo"]
+            modelo.id,
+            modelo.codigo,
+            modelo.nombre,
+            modelo.simbolo
         )
+
+    def _crear_modelo(
+            self,
+            sesion: Session,
+            entidad: Moneda
+    ) -> MonedaModelo:
+        """Crea un modelo de SQLAlchemy a partir de una entidad de dominio."""
+
+        return MonedaModelo(
+            codigo=entidad.codigo,
+            nombre=entidad.nombre,
+            simbolo=entidad.simbolo
+        )
+
+    def _actualizar_modelo(
+            self, 
+            sesion: Session,
+            modelo: MonedaModelo,
+            entidad: Moneda,
+    ) -> None:
+        """Actualiza un modelo de SQLAlchemy a partir de una entidad de dominio."""
+
+        modelo.codigo = entidad.codigo
+        modelo.nombre = entidad.nombre
+        modelo.simbolo = entidad.simbolo
