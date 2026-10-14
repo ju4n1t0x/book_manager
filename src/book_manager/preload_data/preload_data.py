@@ -8,17 +8,12 @@ reales tomados de api.argentinadatos.com.
 
 from pathlib import Path
 
+
+from book_manager.models.models import Base
+from book_manager.repositories.archivo_csv_repository import ArchivoCSV
 from book_manager.repositories.repositories import (
     DIRECTORIO_DATOS,
-    ArchivoCSV,
-    RepositorioCotizacionDolar,
-    RepositorioEditorial,
-    RepositorioGenero,
-    RepositorioLibro,
-    RepositorioMoneda,
-    RepositorioPrecio,
-    RepositorioStock,
-    RepositorioTipoCotizacion,
+
 )
 
 GENEROS = [
@@ -217,16 +212,17 @@ COTIZACIONES = [
     (7, "2026-09-24", 1930.5, 1995.5),
     (7, "2026-09-25", 1937, 2002),
 ]
-
+def _campos_tabla(nombre: str) -> list[str]:
+    return list(Base.metadata.tables[nombre].columns.keys())
 ARCHIVOS = [
-    ("generos", RepositorioGenero.campos, GENEROS),
-    ("editoriales", RepositorioEditorial.campos, EDITORIALES),
-    ("monedas", RepositorioMoneda.campos, MONEDAS),
-    ("tipos_cotizacion", RepositorioTipoCotizacion.campos, TIPOS_COTIZACION),
-    ("libros", RepositorioLibro.campos, LIBROS),
-    ("precios", RepositorioPrecio.campos, PRECIOS),
-    ("stock", RepositorioStock.campos, STOCK),
-    ("cotizaciones", RepositorioCotizacionDolar.campos, COTIZACIONES),
+    ("generos", _campos_tabla("generos"), GENEROS),
+    ("editoriales", _campos_tabla("editoriales"), EDITORIALES),
+    ("monedas", _campos_tabla("monedas"), MONEDAS),
+    ("tipos_cotizacion", _campos_tabla("tipos_cotizacion"), TIPOS_COTIZACION),
+    ("libros", _campos_tabla("libros"), LIBROS),
+    ("precios", _campos_tabla("precios"), PRECIOS),
+    ("stock", _campos_tabla("stock"), STOCK),
+    ("cotizaciones", _campos_tabla("cotizaciones"), COTIZACIONES),
 ]
 
 

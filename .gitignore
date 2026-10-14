@@ -4,3 +4,5 @@ __pycache__/
 venv/
 .vscode/
 .idea/
+src/book_manager/.env
+.env

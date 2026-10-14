@@ -1,0 +1,22 @@
+-- Datos de la tabla cotizaciones
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (1, '2026-09-23', 1485, 1535) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (1, '2026-09-24', 1485, 1535) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (1, '2026-09-25', 1490, 1540) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (2, '2026-09-23', 1535, 1555) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (2, '2026-09-24', 1540, 1560) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (2, '2026-09-25', 1540, 1560) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (3, '2026-09-23', 1530.4, 1536.6) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (3, '2026-09-24', 1537.6, 1542.9) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (3, '2026-09-25', 1539, 1545.6) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (4, '2026-09-23', 1594.6, 1598.3) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (4, '2026-09-24', 1605.8, 1607.1) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (4, '2026-09-25', 1612.5, 1614.3) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (5, '2026-09-23', 1506, 1515) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (5, '2026-09-24', 1507, 1516) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (5, '2026-09-25', 1510, 1519) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (6, '2026-09-23', 1589.48, 1593.58) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (6, '2026-09-24', 1600.57, 1604.45) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (6, '2026-09-25', 1605.68, 1610.04) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (7, '2026-09-23', 1930.5, 1995.5) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (7, '2026-09-24', 1930.5, 1995.5) ON CONFLICT DO NOTHING;
+INSERT INTO cotizaciones (tipo_id, fecha, compra, venta) VALUES (7, '2026-09-25', 1937, 2002) ON CONFLICT DO NOTHING;
