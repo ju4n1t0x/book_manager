@@ -713,11 +713,14 @@ class Consola:
 
     def _menu_reportes(self) -> None:
         while True:
-            print("\n--- Reportes ---")
+            print("\n--- Reportes y Utilidades (Ejercicio 8) ---")
             print("1. Cotizar un libro con todos los tipos de dólar")
             print("2. Catálogo con precios en pesos")
             print("3. Libros con stock bajo")
             print("4. Histórico de cotizaciones de un tipo")
+            print("5. Obtener cotizaciones por API")
+            print("6. Ver lista de precios bimonetaria")
+            print("7. Exportar precios a archivo CSV (todas las monedas)")
             print("0. Volver")
             opcion = input("Opción: ").strip()
 
@@ -730,6 +733,12 @@ class Consola:
                     self._reporte_stock_bajo()
                 case "4":
                     self._reporte_historico()
+                case "5":
+                    self._opcion_obtener_cotizaciones_api()
+                case "6":
+                    self._opcion_precios_bimonetaria()
+                case "7":
+                    self._opcion_exportar_precios_csv()
                 case "0":
                     return
                 case _:
@@ -787,3 +796,93 @@ class Consola:
     def _reporte_historico(self) -> None:
         tipo = self._elegir(self._s.tipos_cotizacion, "Tipo")
         self._tabla_cotizaciones(self._s.cotizaciones.historico(tipo.id))
+    
+    @manejar_errores
+    def _opcion_obtener_cotizaciones_api(self) -> None:
+        """Obtiene y registra las cotizaciones actualizadas
+
+        desde la API externa configurada.
+        """
+        print("\nConsultando cotizaciones por API...")
+        try:
+            cantidad = self._s.cotizaciones.actualizar_desde_api()
+            print(f"Se actualizaron {cantidad} cotizaciones con éxito.")
+        except ConnectionError as error:
+            print(f"Error al conectar con la API: {error}")
+
+    @manejar_errores
+    def _opcion_precios_bimonetaria(self) -> None:
+        """Muestra la lista de precios bimonetaria de los libros,
+
+        permitiendo ver el monto en pesos y en otra moneda seleccionada.
+        """
+        moneda_secundaria = self._elegir(self._s.monedas, "Moneda Secundaria")
+        if not moneda_secundaria:
+            return
+
+        tipo_cot = self._elegir(self._s.tipos_cotizacion, "Tipo de Cotización")
+        if not tipo_cot:
+            return
+
+        ultima_cot = self._s.cotizaciones.ultima(tipo_cot.id)
+        tasa_cambio = ultima_cot.venta if ultima_cot else 1.0
+        if tasa_cambio <= 0:
+            tasa_cambio = 1.0
+
+        print(f"\n--- Precios en Pesos y {moneda_secundaria.nombre} ---")
+        filas = []
+        for libro in self._s.libros.listar():
+            precios_libro = self._s.precios.precios_de_libro(libro.id)
+            precio_ars = next(
+                (p.monto for p in precios_libro if p.moneda.codigo == "ARS"),
+                0.0,
+            )
+            precio_sec = precio_ars / tasa_cambio
+            filas.append(
+                [
+                    libro.id,
+                    libro.titulo,
+                    formato_pesos(precio_ars),
+                    f"{moneda_secundaria.simbolo} {precio_sec:,.2f}",
+                ]
+            )
+
+        mostrar_tabla(
+            ["Id", "Título", "Precio (ARS)", f"Precio ({moneda_secundaria.codigo})"],
+            filas,
+        )
+
+    @manejar_errores
+    def _opcion_exportar_precios_csv(self) -> None:
+        """Exporta los precios de los libros a un archivo CSV
+
+        para todos los tipos de monedas registrados en el sistema.
+        """
+        nombre_archivo = "precios_bimonetarios.csv"
+        print(f"\nExportando precios a {nombre_archivo}...")
+
+        try:
+            with open(
+                nombre_archivo, mode="w", newline="", encoding="utf-8"
+            ) as archivo:
+                escritor = csv.writer(archivo)
+                escritor.writerow(
+                    ["Libro_Id", "ISBN", "Título", "Moneda", "Monto"]
+                )
+
+                for libro in self._s.libros.listar():
+                    precios_libro = self._s.precios.precios_de_libro(libro.id)
+                    for precio in precios_libro:
+                        escritor.writerow(
+                            [
+                                libro.id,
+                                libro.isbn,
+                                libro.titulo,
+                                precio.moneda.codigo,
+                                precio.monto,
+                            ]
+                        )
+
+            print(f"Archivo '{nombre_archivo}' exportado correctamente.")
+        except IOError as error:
+            print(f"No se pudo generar el archivo CSV: {error}")
