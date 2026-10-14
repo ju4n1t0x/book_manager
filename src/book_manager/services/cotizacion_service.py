@@ -1,7 +1,14 @@
+import abc
+import datetime
+import json
+import os
+import urllib.error
+import urllib.request
 
-import abc, json, urllib.error, urllib.request, datetime
-
+from pathlib import Path
 from typing import List, NamedTuple, Optional
+
+from dotenv import load_dotenv
 from book_manager.services.precio_service import PrecioService
 from book_manager.services.tipo_cotizacion_service import TipoCotizacionService
 
@@ -37,11 +44,18 @@ class ProveedorCotizaciones(abc.ABC):
 
 
 class DolarApi(ProveedorCotizaciones):
-    """Consulta las cotizaciones del dólar en https://dolarapi.com."""
-
-    URL = "https://dolarapi.com/v1/dolares"
+    """Consulta las cotizaciones del dólar en DolarAPI."""
 
     def __init__(self, timeout: int = 5) -> None:
+        ruta_env = Path(__file__).resolve().parents[3] / ".env"
+        load_dotenv(dotenv_path=ruta_env)
+
+        self._url = os.getenv("API_URL")
+        if not self._url:
+            raise ValueError(
+                "La variable 'API_URL' no está definida en el archivo .env."
+            )
+
         self._timeout = timeout
 
     def obtener(self) -> List[CotizacionExterna]:
@@ -51,8 +65,8 @@ class DolarApi(ProveedorCotizaciones):
         el Request con ese encabezado.
         """
         pedido = urllib.request.Request(
-            self.URL, headers={"User-Agent": "book-manager"}
-        )
+            self._url, headers={"User-Agent": "book-manager"}
+                ) 
         try:
             with urllib.request.urlopen(
                 pedido, timeout=self._timeout
@@ -76,7 +90,7 @@ class DolarApi(ProveedorCotizaciones):
         ]
 
 
-class CotizacionService:
+class ServicioCotizacionDolar:
     """Lógica de las cotizaciones del dólar."""
 
     def __init__(
@@ -135,7 +149,7 @@ class CotizacionService:
                 f"No hay cotización del tipo {tipo_id} para el {fecha}."
             )
 
-    def actualizar_desde_api(self) -> int:
+    def obtener_cotizaciones(self) -> int:
         """Trae las cotizaciones del día y las guarda.
 
         Si ya había una cotización de hoy para ese tipo, se pisa con la nueva.
@@ -162,6 +176,11 @@ class CotizacionService:
                 self._repositorio.crear(cotizacion)
             guardadas += 1
         return guardadas
+    def actualizar_desde_api(self) -> int:
+            """Mantiene la compatibilidad con las llamadas anteriores."""
+            return self.obtener_cotizaciones() 
+
+CotizacionService = ServicioCotizacionDolar
 
 class CotizadorService:
     """Calcula el precio de los libros en pesos según cada tipo de dólar."""

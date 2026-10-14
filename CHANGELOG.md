@@ -1,5 +1,16 @@
 # CHANGELOG
 
+
+## [Ejercicio 7]
+
+- Configuramos la variable `API_URL` en el archivo `.env` para obtener las cotizaciones desde DolarAPI.
+- Creamos el servicio `ServicioCotizacionDolar` con la función `obtener_cotizaciones`, encargada de consultar la API, identificar los tipos de cotización y guardar los valores en la base de datos.
+- Adaptamos los repositorios `RepositorioTipoCotizacion` y `RepositorioCotizacionDolar` para trabajar con PostgreSQL mediante SQLAlchemy.
+- Actualizamos `repositories.py` para utilizar los repositorios de PostgreSQL en las cotizaciones, manteniendo los demás repositorios en CSV.
+- Modificamos `main.py` para cargar la variable `DIRECT_URL`, establecer la conexión con PostgreSQL e inicializar los servicios.
+- Mantuvimos la compatibilidad con los nombres anteriores para no afectar el funcionamiento del resto del sistema.
+
+
 ## [Ejercicio 5]
 
 - Creamos migrations/migrations.py con la función migrar_datos.
