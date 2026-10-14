@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [Ejercicio 8]
+- Añadida la opción para obtener cotizaciones actualizadas mediante API externa.
+- Implementado el listado de precios bimonetario para visualizar montos en pesos y otra moneda seleccionada.
+- Agregada la funcionalidad para exportar los precios a un archivo CSV para todos los tipos de monedas.
+
 ## [Ejercicio 6]
 
 - Realizamos la migracion de los repositorios para que empiecen a consumir y persistir los datos directamente en la base de datos de supabase
