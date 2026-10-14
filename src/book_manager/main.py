@@ -1,3 +1,4 @@
+
 """Punto de entrada del sistema Book Manager."""
 import os
 import sys
@@ -10,7 +11,7 @@ from dotenv import load_dotenv
 
 
 def main(import_default_data: bool = False) -> None:
-    """Arma el sistema y abre el menú de consola.
+    """Arma el sistema y abre el menú de consola."""
 
     Args:
         import_default_data (bool): Si es True, antes de empezar se

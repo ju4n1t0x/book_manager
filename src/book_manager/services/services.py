@@ -8,7 +8,7 @@ from book_manager.services import (
     PrecioService,
     StockService,
     ProveedorCotizaciones,
-    CotizacionService,
+    ServicioCotizacionDolar,
     GeneroService,
     ReporteService,
     CotizadorService,
@@ -21,7 +21,9 @@ class Servicios:
     def __init__(
         self, repositorios: Repositorios, proveedor: ProveedorCotizaciones
     ) -> None:
-        self.generos = GeneroService(repositorios.generos, repositorios.libros)
+        self.generos = GeneroService(
+            repositorios.generos, repositorios.libros
+        )
         self.editoriales = EditorialService(
             repositorios.editoriales, repositorios.libros
         )
@@ -29,17 +31,28 @@ class Servicios:
             repositorios.monedas, repositorios.precios
         )
         self.tipos_cotizacion = TipoCotizacionService(
-            repositorios.tipos_cotizacion, repositorios.cotizaciones
+            repositorios.tipos_cotizacion,
+            repositorios.cotizaciones,
+        )
+        self.cotizaciones = ServicioCotizacionDolar(
+            repositorios.cotizaciones,
+            self.tipos_cotizacion,
+            proveedor,
         )
         self.libros = LibroService(
-            repositorios.libros, repositorios.precios, repositorios.stock
+            repositorios.libros,
+            repositorios.precios,
+            repositorios.stock,
         )
         self.precios = PrecioService(repositorios.precios)
-        self.stock = StockService(repositorios.stock, repositorios.libros)
-        self.cotizaciones = CotizacionService(
-            repositorios.cotizaciones, self.tipos_cotizacion, proveedor
+        self.stock = StockService(
+            repositorios.stock, repositorios.libros
         )
         self.cotizador = CotizadorService(
-            self.precios, self.cotizaciones, self.tipos_cotizacion
+            self.precios,
+            self.cotizaciones,
+            self.tipos_cotizacion,
         )
-        self.reportes = ReporteService(self.libros, self.stock, self.cotizador)
+        self.reportes = ReporteService(
+            self.libros, self.stock, self.cotizador
+        )

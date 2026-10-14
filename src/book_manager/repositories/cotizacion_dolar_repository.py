@@ -93,11 +93,12 @@ class IRepositorioCotizacionDolar(ABC):
         pass
 
 class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
-    """Repositorio de cotizaciones guardado en CSV.
+    """Repositorio de cotizaciones guardado en PostgreSQL.
 
     La clave es el par (tipo, fecha).
     """
-
+    campos = ["tipo_id", "fecha", "compra", "venta"]
+    
     def __init__(self, conexion: ConexionDB) -> None:
         self._conexion = conexion
 
