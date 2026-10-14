@@ -5,7 +5,7 @@ import functools
 from enum import IntEnum
 from typing import Any, Callable, Optional
 
-from book_manager.entities.entities import (
+from book_manager.entities import (
     Editorial,
     Genero,
     Libro,
@@ -13,7 +13,7 @@ from book_manager.entities.entities import (
     Precio,
     TipoCotizacion,
 )
-from book_manager.services.services import ServicioCrud, Servicios
+from book_manager.services import ServicioCrud, Servicios
 
 
 def manejar_errores(funcion: Callable) -> Callable:
