@@ -115,7 +115,8 @@ def migrar_datos(carpeta_csvs: str, carpeta_sqls: str) -> None:
         carpeta_sqls (str): Carpeta donde se deben guardar los archivos
             sql generados.
     """
-    load_dotenv()
+    ruta_env = Path(__file__).resolve().parents[1] / ".env"
+    load_dotenv(dotenv_path=ruta_env)
     url = os.getenv("DIRECT_URL")
     if not url:
         raise ValueError(

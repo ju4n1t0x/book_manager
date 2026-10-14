@@ -77,7 +77,7 @@ class IRepositorioStock(ABC):
 
 
 class RepositorioStock(IRepositorioStock):
-    """Repositorio de stock guardado en CSV. La clave es el id del libro."""
+    """Repositorio de stock guardado en Supabase. La clave es el id del libro."""
 
     campos = ["libro_id", "cantidad", "cantidad_minima"]
 

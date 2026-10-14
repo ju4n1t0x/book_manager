@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Generic, List, Optional, TypeVar, Type
 
 from sqlalchemy import select

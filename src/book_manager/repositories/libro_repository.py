@@ -9,10 +9,10 @@ from book_manager.repositories.irepositorio import IRepositorio
 from book_manager.entities import (
     Libro,
     Genero,
-    Editorial,  
+    Editorial,
 )
 
-from book_manager.models.models import(
+from book_manager.models.models import (
     LibroModelo,
     GeneroModelo,
     EditorialModelo
@@ -69,7 +69,7 @@ class RepositorioLibro(RepositorioSqlAlchemy[Libro, LibroModelo], IRepositorioLi
     def _obtener_editorial(
            self,
            sesion: Session,
-           editorial_id: int 
+           editorial_id: int
     ) -> EditorialModelo:
         """Obtiene un modelo de editorial por su ID."""
 
@@ -102,7 +102,7 @@ class RepositorioLibro(RepositorioSqlAlchemy[Libro, LibroModelo], IRepositorioLi
         """Crea un modelo de SQLAlchemy a partir de una entidad de dominio."""
 
         editorial = self._obtener_editorial(
-            sesion, 
+            sesion,
             entidad.editorial.id,
             )
 
@@ -126,7 +126,8 @@ class RepositorioLibro(RepositorioSqlAlchemy[Libro, LibroModelo], IRepositorioLi
             modelo: LibroModelo,
             entidad: Libro
     ) -> None:
-        """Actualiza un modelo de SQLAlchemy a partir de una entidad de dominio."""
+        """Actualiza un modelo de SQLAlchemy a partir 
+        de una entidad de dominio."""
 
         modelo.isbn = entidad.isbn
         modelo.titulo = entidad.titulo

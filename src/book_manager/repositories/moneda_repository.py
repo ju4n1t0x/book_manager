@@ -51,7 +51,8 @@ class RepositorioMoneda(RepositorioSqlAlchemy[Moneda, MonedaModelo]):
             modelo: MonedaModelo,
             entidad: Moneda,
     ) -> None:
-        """Actualiza un modelo de SQLAlchemy a partir de una entidad de dominio."""
+        """Actualiza un modelo de SQLAlchemy a partir 
+        de una entidad de dominio."""
 
         modelo.codigo = entidad.codigo
         modelo.nombre = entidad.nombre

@@ -2,13 +2,11 @@
 
 from pathlib import Path
 
-from book_manager.repositories.archivo_csv_repository import ArchivoCSV
 from book_manager.database.connection import ConexionDB
 from book_manager.repositories.editorial_repository import (
     RepositorioEditorial,
 )
 from book_manager.repositories.genero_repository import RepositorioGenero
-from book_manager.repositories.moneda_repository import RepositorioMoneda
 from book_manager.repositories.tipo_cotizacion_repository import (
     RepositorioTipoCotizacion,
 )
@@ -32,31 +30,14 @@ class Repositorios:
     def __init__(
         self,
         conexion: ConexionDB,
-        directorio: Path = DIRECTORIO_DATOS,
     ) -> None:
         """Inicializa los repositorios CSV y PostgreSQL."""
 
-        self.generos = RepositorioGenero(directorio / "generos.csv")
-        self.editoriales = RepositorioEditorial(
-            directorio / "editoriales.csv"
-        )
-        self.monedas = RepositorioMoneda(directorio / "monedas.csv")
-
+        self.generos = RepositorioGenero(conexion)
+        self.editoriales = RepositorioEditorial(conexion)
+        self.monedas = RepositorioMoneda(conexion)
         self.tipos_cotizacion = RepositorioTipoCotizacion(conexion)
-
-        self.libros = RepositorioLibro(
-            directorio / "libros.csv",
-            self.editoriales,
-            self.generos,
-        )
-        self.precios = RepositorioPrecio(
-            directorio / "precios.csv",
-            self.libros,
-            self.monedas,
-        )
-        self.stock = RepositorioStock(
-            directorio / "stock.csv",
-            self.libros,
-        )
-
+        self.libros = RepositorioLibro(conexion)
+        self.precios = RepositorioPrecio(conexion)
+        self.stock = RepositorioStock(conexion)
         self.cotizaciones = RepositorioCotizacionDolar(conexion)

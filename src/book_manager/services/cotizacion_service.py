@@ -18,8 +18,10 @@ from book_manager.entities import (
     Precio,
 
 )
+
 from book_manager.repositories import (
     IRepositorioCotizacionDolar,
+
 )  
 
 
@@ -47,22 +49,23 @@ class DolarApi(ProveedorCotizaciones):
     """Consulta las cotizaciones del dólar en DolarAPI."""
 
     def __init__(self, timeout: int = 5) -> None:
-        ruta_env = Path(__file__).resolve().parents[3] / ".env"
+        ruta_env = Path(__file__).resolve().parents[1] / ".env"
         load_dotenv(dotenv_path=ruta_env)
 
-        self._url = os.getenv("API_URL")
-        if not self._url:
+        url = os.getenv("API_URL")
+        if not url:
             raise ValueError(
                 "La variable 'API_URL' no está definida en el archivo .env."
             )
+
+        self._url: str = url
 
         self._timeout = timeout
 
     def obtener(self) -> List[CotizacionExterna]:
         """Consulta la API y devuelve una cotización por cada tipo de dólar.
-
-        La API responde 403 si el pedido no tiene User-Agent, por eso se arma
-        el Request con ese encabezado.
+            La API responde 403 si el pedido no tiene User-Agent, por eso se 
+            arma el Request con ese encabezado.
         """
         pedido = urllib.request.Request(
             self._url, headers={"User-Agent": "book-manager"}
@@ -246,6 +249,11 @@ class CotizadorService:
             cotizacion = self._cotizaciones.ultima(tipo.id)
             if cotizacion is not None:
                 pesos = self.a_pesos(precio, cotizacion)
+                if pesos is None:
+                    raise ValueError(
+                        "El precio base debe estar expresado en ARS o USD."
+                    )
+                
                 resultado.append(
                     (cotizacion, pesos, round(pesos / cotizacion.venta, 2))
                 )

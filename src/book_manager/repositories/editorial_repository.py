@@ -4,7 +4,6 @@ from book_manager.entities import Editorial
 from book_manager.models.models import EditorialModelo
 from book_manager.repositories.sqlalchemy_repository import RepositorioSqlAlchemy
 from book_manager.database.connection import ConexionDB
-from abc import ABC
 
 
 
@@ -48,7 +47,8 @@ class RepositorioEditorial(RepositorioSqlAlchemy[Editorial, EditorialModelo]):
             modelo: EditorialModelo,
             entidad: Editorial
             ) -> None:
-        """Actualiza un modelo de SQLAlchemy a partir de una entidad de dominio."""
+        """Actualiza un modelo de SQLAlchemy a partir 
+        de una entidad de dominio."""
         modelo.nombre = entidad.nombre
         modelo.pais = entidad.pais
         modelo.sitio_web = entidad.sitio_web

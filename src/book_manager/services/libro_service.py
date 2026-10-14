@@ -1,6 +1,10 @@
 
 from book_manager.entities import Libro
-from book_manager.repositories import IRepositorio, RepositorioPrecio, IRepositorioStock
+from book_manager.repositories import (
+    IRepositorio, 
+    RepositorioPrecio, 
+    IRepositorioStock
+)
 from book_manager.services.crud_services import ServicioCrud
 from typing import List
 

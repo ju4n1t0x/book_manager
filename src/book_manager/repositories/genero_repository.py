@@ -44,7 +44,8 @@ class RepositorioGenero(RepositorioSqlAlchemy[Genero, GeneroModelo]):
             modelo: GeneroModelo,
             entidad: Genero
             ) -> None:
-        """Actualiza un modelo de SQLAlchemy a partir de una entidad de dominio."""
+        """Actualiza un modelo de SQLAlchemy a partir 
+        de una entidad de dominio."""
         modelo.nombre = entidad.nombre
         modelo.descripcion = entidad.descripcion
 

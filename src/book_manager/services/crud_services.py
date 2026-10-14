@@ -1,8 +1,5 @@
-
-import datetime
 from typing import Generic, List, TypeVar
 from book_manager.entities import EntidadBase
-
 
 from book_manager.repositories import (
     IRepositorio,

@@ -1,5 +1,5 @@
-
-import abc, csv
+import abc
+import csv
 
 from pathlib import Path
 from typing import Iterator, List, Optional, TypeVar
