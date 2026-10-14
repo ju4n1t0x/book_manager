@@ -10,6 +10,10 @@
 - Modificamos `main.py` para cargar la variable `DIRECT_URL`, establecer la conexión con PostgreSQL e inicializar los servicios.
 - Mantuvimos la compatibilidad con los nombres anteriores para no afectar el funcionamiento del resto del sistema.
 
+## [Ejercicio 6]
+
+- Realizamos la migracion de los repositorios para que empiecen a consumir y persistir los datos directamente en la base de datos de supabase
+- Dejamos la migracion de los archivos csv, solo para que se migren al inciar, pero dejan de tener implementacion en el sistema
 
 ## [Ejercicio 5]
 

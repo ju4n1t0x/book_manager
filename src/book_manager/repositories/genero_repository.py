@@ -1,18 +1,50 @@
+from sqlalchemy.orm import Session
 
 from book_manager.entities import Genero
-from book_manager.repositories.archivo_csv_repository import RepositorioCSV
+from book_manager.models.models import GeneroModelo
+from book_manager.repositories.sqlalchemy_repository import RepositorioSqlAlchemy
+from book_manager.database.connection import ConexionDB
 
-class RepositorioGenero(RepositorioCSV[Genero]):
+
+
+
+class RepositorioGenero(RepositorioSqlAlchemy[Genero, GeneroModelo]):
     """Repositorio de géneros."""
 
-    campos = ["id", "nombre", "descripcion"]
+    modelo = GeneroModelo
 
-    def _a_fila(self, entidad: Genero) -> dict:
-        return {
-            "id": entidad.id,
-            "nombre": entidad.nombre,
-            "descripcion": entidad.descripcion,
-        }
+    def __init__(self, conexion: ConexionDB) -> None:
+        super().__init__(conexion)
 
-    def _desde_fila(self, fila: dict[str, str]) -> Genero:
-        return Genero(int(fila["id"]), fila["nombre"], fila["descripcion"])
+    def _a_entidad(
+            self, 
+            modelo: GeneroModelo
+            ) -> Genero:
+        """Convierte un modelo de SQLAlchemy a una entidad de dominio."""
+        return Genero(
+            modelo.id,
+            modelo.nombre,
+            modelo.descripcion
+        )
+
+    def _crear_modelo(
+            self,
+            sesion: Session,
+            entidad: Genero
+            ) -> GeneroModelo:
+        """Crea un modelo de SQLAlchemy a partir de una entidad de dominio."""
+        return GeneroModelo(
+            nombre=entidad.nombre,
+            descripcion=entidad.descripcion
+        )
+
+    def _actualizar_modelo(
+            self,
+            sesion: Session,
+            modelo: GeneroModelo,
+            entidad: Genero
+            ) -> None:
+        """Actualiza un modelo de SQLAlchemy a partir de una entidad de dominio."""
+        modelo.nombre = entidad.nombre
+        modelo.descripcion = entidad.descripcion
+

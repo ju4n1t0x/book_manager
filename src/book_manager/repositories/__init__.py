@@ -9,3 +9,4 @@ from book_manager.repositories.tipo_cotizacion_repository import RepositorioTipo
 from book_manager.repositories.libro_repository import RepositorioLibro
 from book_manager.repositories.precio_repository import RepositorioPrecio
 from book_manager.repositories.repositories import Repositorios
+from book_manager.repositories.sqlalchemy_repository import RepositorioSqlAlchemy 

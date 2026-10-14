@@ -13,6 +13,7 @@ from book_manager.repositories.tipo_cotizacion_repository import (
     RepositorioTipoCotizacion,
 )
 from book_manager.repositories.libro_repository import RepositorioLibro
+from book_manager.repositories.moneda_repository import RepositorioMoneda
 from book_manager.repositories.precio_repository import RepositorioPrecio
 from book_manager.repositories.stock_repository import RepositorioStock
 from book_manager.repositories.cotizacion_dolar_repository import (
