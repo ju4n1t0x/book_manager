@@ -6,23 +6,19 @@ Trabajo Práctico Integrador - Seminario de Actualización.
 
 ## Objetivo
 
-Persistir los datos en una base de datos relacional utilizando como ORM SQLAlchemy
+Scrapping web para obtencion de precios de nuestros competidores.
 
 ## Introducción y contexto
 
 ### Sprint 2
 
-**Desarrollar el sprint 2**
+**Desarrollar el sprint 3**
 
-En esta segunda entrega vamos a ampliar el alcance haciendo que nuestra aplicación persista en una base de datos relacional. Para este caso vamos a utilizar el ORM [SQLAlchemy](https://colab.research.google.com/drive/1SKsOF5rdQ-Ul4PnMloZsCsNRO2nWH4KZ).
+En esta tercer entrega vamos a descargar y obtener datos de la web para trabajar con ellos.
 
-La idea principal es realizar una migración de todos los datos cargados en los archivos a tablas relacionales.
+La idea es obtener precios de nuestros competidores (librerías con venta online) y de esta forma poder compararnos con ellos y competir de forma más informada.
 
-El objetivo principal es consolidar las bases de manejo de bases de datos, normalización, conexión segura y carga inicial.
-
-Además realizaremos consultas a APIs externas.
-
-Para todo esto debemos partir del último push que se realizó en la entrega 1.
+Para todo esto debemos partir del último push que se realizó en la entrega 2.
 
 ### Entidades
 
@@ -38,34 +34,55 @@ Para todo esto debemos partir del último push que se realizó en la entrega 1.
 ## Estructura
 
 ```
+## Ejercicio 01
+
+> Puntos: 1
+
+Inicialización y configuración de la herramienta de versionado. Vamos a trabajar sobre la rama llamada "Sprint_3" y debemos partir de la rama "Sprint_2".
+
+La estructura de directorios es:
+
+```
+
 book_manager/
 ├── src/
-│   └── book_manager/
-│       ├── database/
-│       │   └── connection.py          # conexcion a la base de datos
-│       ├── entities/
-│       │   └── entities.py            # clases de dominio
-│       ├── models/
-│       │   └── models.py              # tablas de la base de datos (SQLAlchemy)
-│       ├── preload_data/
-│       │   └── preload_data.py        # datos iniciales, se escriben en migrations/csv
-│       ├── repositories/
-│       │   └── repositories.py        # persistencia en los archivos CSV
-│       ├── services/
-│       │   └── services.py            # lógica de negocio y consulta de cotizaciones
-│       ├── migrations/
-│       │   └── csv/                   # archivos CSV donde se guardan los datos
-│       ├── ui/
-│       │   └── console.py             # menús de consola
-│       └── main.py
+│ └── book_manager/
+│ ├── database/
+│ │ └── connection.py
+│ ├── entities/
+│ │ └── entities.py
+│ ├── models/
+│ │ └── models.py
+│ ├── preload_data/
+│ │ └── preload_data.py
+│ ├── repositories/
+│ │ └── repositories.py
+│ ├── scraper
+│ │ └── (estructura del scraper scrapy)
+│ ├── services/
+│ │ └── services.py
+│ ├── migrations
+│ │ ├── csv
+│ │ └── sql
+│ ├── reportes
+│ │ └── (reportes excel generados)
+│ ├── ui/
+│ │ └── console.py
+│ └── main.py
+├── .env
 ├── CHANGELOG.md
 ├── README.md
 └── requirements.txt
-```
+
+````
 
 ## Cotización del dólar
 
 Las cotizaciones se obtienen de [DolarApi](https://dolarapi.com) usando urllib de la librería estándar, así que no hace falta instalar nada. Si no hay conexión se usa la última cotización guardada.
+
+## Scrapping web
+
+Los datos sobre precios de libros se obtienen de [CuspideSpider](https://cuspide.com/) usando la libreria scrappy.
 
 ## Ejecución
 
@@ -73,7 +90,7 @@ Desde la carpeta src:
 
 ```bash
 python -m book_manager.main
-```
+````
 
 Para volver a cargar los datos iniciales de preload_data.py en migrations/csv (se pierden los cambios hechos):
 
