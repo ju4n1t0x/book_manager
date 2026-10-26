@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [Ejercicio 4]
+
+- Implementamos alerta_precio_service.py para generar alertas de precio al comparar los precios de Cuspide con los de nuestra db
+- main_scraper.py pide la diferencia minima de precio en pesos y el tipo de cotizacion del dolar, que se obtiene desde la API configurada en el .env
+- Las alertas generadas se guardan en un csv dentro de la carpeta reportes
+
 ## [Ejercicio 3]
 
 - Implementamos la estructura del scraper segun los ejercicios planteados
