@@ -8,6 +8,7 @@ from book_manager.services import DolarApi, Servicios
 from book_manager.ui.console import Consola
 from book_manager.database.connection import ConexionDB
 from dotenv import load_dotenv
+from book_manager.models.models import crear_tablas
 
 
 RUTA_ENV = Path(__file__).resolve().parents[2] / ".env"
@@ -38,6 +39,7 @@ def main(import_default_data: bool = False) -> None:
                          f"no está definida en el archivo .env.")
 
     conexion = ConexionDB(url)
+    crear_tablas(conexion.engine)
    
     try:
         repositorios = Repositorios(conexion)

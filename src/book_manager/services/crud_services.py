@@ -1,9 +1,9 @@
 from typing import Generic, List, TypeVar
-from book_manager.entities import EntidadBase
 
-from book_manager.repositories import (
-    IRepositorio,
-)
+from book_manager.entities import EntidadBase
+from book_manager.repositories import IRepositorio
+from book_manager.services.auditoria import auditar
+
 
 T = TypeVar("T", bound=EntidadBase)
 
@@ -20,9 +20,11 @@ class ServicioCrud(Generic[T]):
     def __init__(self, repositorio: IRepositorio[T]) -> None:
         self._repositorio = repositorio
 
+    @auditar("listar")
     def listar(self) -> List[T]:
         return self._repositorio.leer_todos()
 
+    @auditar("buscar")
     def buscar(self, id: int) -> T:
         """Busca una entidad por id.
 
@@ -34,15 +36,18 @@ class ServicioCrud(Generic[T]):
             raise ValueError(f"No se encontró {self.entidad} con id {id}.")
         return entidad
 
+    @auditar("crear")
     def crear(self, entidad: T) -> T:
         self._validar(entidad)
         return self._repositorio.crear(entidad)
 
+    @auditar("actualizar")
     def actualizar(self, entidad: T) -> T:
         self.buscar(entidad.id)
         self._validar(entidad)
         return self._repositorio.actualizar(entidad)
 
+    @auditar("eliminar")
     def eliminar(self, id: int) -> None:
         self.buscar(id)
         self._validar_eliminacion(id)

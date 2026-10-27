@@ -11,6 +11,7 @@ from typing import List, NamedTuple, Optional
 from dotenv import load_dotenv
 from book_manager.services.precio_service import PrecioService
 from book_manager.services.tipo_cotizacion_service import TipoCotizacionService
+from book_manager.services.auditoria import auditar
 
 
 from book_manager.entities import (
@@ -22,7 +23,7 @@ from book_manager.entities import (
 from book_manager.repositories import (
     IRepositorioCotizacionDolar,
 
-)  
+)
 
 
 class CotizacionExterna(NamedTuple):
@@ -64,12 +65,12 @@ class DolarApi(ProveedorCotizaciones):
 
     def obtener(self) -> List[CotizacionExterna]:
         """Consulta la API y devuelve una cotización por cada tipo de dólar.
-            La API responde 403 si el pedido no tiene User-Agent, por eso se 
+            La API responde 403 si el pedido no tiene User-Agent, por eso se
             arma el Request con ese encabezado.
         """
         pedido = urllib.request.Request(
             self._url, headers={"User-Agent": "book-manager"}
-                ) 
+                )
         try:
             with urllib.request.urlopen(
                 pedido, timeout=self._timeout
@@ -106,13 +107,16 @@ class ServicioCotizacionDolar:
         self._tipos = tipos
         self._proveedor = proveedor
 
+    @auditar("listar_cotizaciones")
     def listar(self) -> List[CotizacionDolar]:
         return self._repositorio.leer_todos()
 
+    @auditar("consultar_historico_cotizaciones")
     def historico(self, tipo_id: int) -> List[CotizacionDolar]:
         self._tipos.buscar(tipo_id)
         return self._repositorio.leer_historico_por_tipo(tipo_id)
 
+    @auditar("consultar_ultima_cotizacion")
     def ultima(self, tipo_id: int) -> Optional[CotizacionDolar]:
         """Devuelve la cotización más reciente de un tipo.
 
@@ -123,6 +127,8 @@ class ServicioCotizacionDolar:
         historico = self._repositorio.leer_historico_por_tipo(tipo_id)
         return historico[-1] if historico else None
 
+
+    @auditar("buscar_cotizacion")
     def buscar(self, tipo_id: int, fecha: datetime.date) -> CotizacionDolar:
         cotizacion = self._repositorio.leer_por_tipo_y_fecha(tipo_id, fecha)
         if cotizacion is None:
@@ -131,6 +137,8 @@ class ServicioCotizacionDolar:
             )
         return cotizacion
 
+
+    @auditar("crear_cotizacion")
     def crear(
         self, tipo_id: int, fecha: datetime.date, compra: float, venta: float
     ) -> CotizacionDolar:
@@ -139,6 +147,7 @@ class ServicioCotizacionDolar:
             CotizacionDolar(tipo, fecha, compra, venta)
         )
 
+    @auditar("actualizar_cotizacion")
     def actualizar(
         self, tipo_id: int, fecha: datetime.date, compra: float, venta: float
     ) -> CotizacionDolar:
@@ -146,12 +155,17 @@ class ServicioCotizacionDolar:
         nueva = CotizacionDolar(cotizacion.tipo, fecha, compra, venta)
         return self._repositorio.actualizar(nueva)
 
+
+
+    @auditar("eliminar_cotizacion")
     def eliminar(self, tipo_id: int, fecha: datetime.date) -> None:
         if not self._repositorio.eliminar(tipo_id, fecha):
             raise ValueError(
                 f"No hay cotización del tipo {tipo_id} para el {fecha}."
             )
 
+
+    @auditar("actualizar_cotizaciones_desde_api")
     def obtener_cotizaciones(self) -> int:
         """Trae las cotizaciones del día y las guarda.
 
@@ -181,7 +195,7 @@ class ServicioCotizacionDolar:
         return guardadas
     def actualizar_desde_api(self) -> int:
             """Mantiene la compatibilidad con las llamadas anteriores."""
-            return self.obtener_cotizaciones() 
+            return self.obtener_cotizaciones()
 
 CotizacionService = ServicioCotizacionDolar
 
@@ -253,7 +267,7 @@ class CotizadorService:
                     raise ValueError(
                         "El precio base debe estar expresado en ARS o USD."
                     )
-                
+
                 resultado.append(
                     (cotizacion, pesos, round(pesos / cotizacion.venta, 2))
                 )
