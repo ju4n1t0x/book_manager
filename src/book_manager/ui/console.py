@@ -4,6 +4,7 @@ import datetime
 import functools
 from enum import IntEnum
 from typing import Any, Callable, Optional
+from pathlib import Path
 
 from book_manager.entities import (
     Editorial,
@@ -721,6 +722,7 @@ class Consola:
             print("5. Obtener cotizaciones por API")
             print("6. Ver lista de precios bimonetaria")
             print("7. Exportar precios a archivo CSV (todas las monedas)")
+            print("8. Exportar comparación de precios a Excel")
             print("0. Volver")
             opcion = input("Opción: ").strip()
 
@@ -739,6 +741,8 @@ class Consola:
                     self._opcion_precios_bimonetaria()
                 case "7":
                     self._opcion_exportar_precios_csv()
+                case "8":
+                    self._opcion_exportar_precios_excel()
                 case "0":
                     return
                 case _:
@@ -886,3 +890,36 @@ class Consola:
             print(f"Archivo '{nombre_archivo}' exportado correctamente.")
         except IOError as error:
             print(f"No se pudo generar el archivo CSV: {error}")
+
+    @manejar_errores
+    def _opcion_exportar_precios_excel(self) -> None:
+        """Exporta la comparación de precios a un archivo Excel."""
+
+        carpeta_reportes = Path(__file__).resolve().parents[1] / "reportes"
+        ruta_resultados = carpeta_reportes / "cuspide_resultados.csv"
+
+        if not ruta_resultados.exists():
+            print("\nNo se encontraron resultados del scraping de Cúspide.")
+            return
+
+        tipo = self._elegir(self._s.tipos_cotizacion, "Tipo de cotización")
+        diferencia_minima = pedir_decimal("Diferencia mínima en pesos", 0)
+
+        resultados = self._s.alertas_precios.leer_resultados(ruta_resultados)
+
+        alertas = self._s.alertas_precios.comparar(
+            resultados,
+            diferencia_minima,
+            tipo.id,
+        )
+
+        if not alertas:
+            print("\nNo se encontraron diferencias de precios.")
+            return
+
+        ruta = self._s.exportador_excel.exportar(
+            alertas,
+            carpeta_reportes,
+        )
+
+        print(f"\nArchivo Excel generado correctamente: {ruta}")

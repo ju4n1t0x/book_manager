@@ -14,6 +14,8 @@ from book_manager.services import (
     CotizadorService,
 )
 from book_manager.repositories import Repositorios
+from book_manager.services.alerta_precio_service import AlertaPrecioService
+from book_manager.services.exportador_excel_service import ExportadorExcelService
 
 class Servicios:
     """Crea todos los servicios a partir de los repositorios."""
@@ -56,3 +58,9 @@ class Servicios:
         self.reportes = ReporteService(
             self.libros, self.stock, self.cotizador
         )
+        
+        self.alertas_precios = AlertaPrecioService(
+            self.libros,
+            self.cotizador,
+        )
+        self.exportador_excel = ExportadorExcelService()

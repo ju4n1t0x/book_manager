@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [Ejercicio 5]
+
+- Agregamos la comparación de precios entre el catálogo interno y los resultados obtenidos de Cúspide.
+- Agregamos la exportación de la comparación de precios a un archivo Excel.
+- Agregamos la opción para exportar el informe desde el menú de reportes.
+- Implementamos openpyxl como dependencia para generar archivos Excel.
+
 ## [Ejercicio 4]
 
 - Implementamos alerta_precio_service.py para generar alertas de precio al comparar los precios de Cuspide con los de nuestra db

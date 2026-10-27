@@ -2,7 +2,7 @@
 
 Trabajo Práctico Integrador - Seminario de Actualización.
 
-## Sprint actual: Sprint 2
+## Sprint actual: Sprint 3
 
 ## Objetivo
 
