@@ -10,7 +10,7 @@ from book_manager.database.connection import ConexionDB
 from dotenv import load_dotenv
 
 
-RUTA_ENV = Path(__file__).resolve().parent / ".env"
+RUTA_ENV = Path(__file__).resolve().parents[2] / ".env"
 RUTA_MIGRACIONES = Path(__file__).resolve().parent / "migrations"
 
 def main(import_default_data: bool = False) -> None:
