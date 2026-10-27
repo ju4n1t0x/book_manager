@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [Ejercicio 6]
+- Incorporamos un decorador para registrar las operaciones del sistema en la tabla de auditoría, almacenando la acción, la fecha y los detalles de cada operación.
+
 ## [Ejercicio 5]
 
 - Agregamos la comparación de precios entre el catálogo interno y los resultados obtenidos de Cúspide.

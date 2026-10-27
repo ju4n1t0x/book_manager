@@ -7,11 +7,13 @@ from typing import List, Optional
 from sqlalchemy import (
     CheckConstraint,
     Date,
+    DateTime,
     Engine,
     ForeignKey,
     Integer,
     Numeric,
     String,
+    Text,
     UniqueConstraint,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -159,6 +161,22 @@ class CotizacionDolarModelo(Base):
     tipo: Mapped["TipoCotizacionModelo"] = relationship(
         back_populates="cotizaciones"
     )
+
+class AuditoriaModelo(Base):
+    """Registra las operaciones realizadas en el sistema."""
+
+    __tablename__ = "auditoria"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    accion: Mapped[str] = mapped_column(String(100))
+    fecha: Mapped[datetime.datetime] = mapped_column(
+        DateTime,
+        default=datetime.datetime.now
+    )
+    detalles: Mapped[str] = mapped_column(Text)
+
+
+
 
 
 def crear_tablas(engine: Engine) -> None:

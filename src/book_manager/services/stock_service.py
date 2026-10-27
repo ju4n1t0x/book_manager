@@ -2,7 +2,7 @@
 from typing import List
 from book_manager.entities import Stock, Libro
 from book_manager.repositories import IRepositorio, IRepositorioStock
-
+from book_manager.services.auditoria import auditar
 
 class StockService:
     """Lógica del stock de los libros."""
@@ -13,9 +13,12 @@ class StockService:
         self._repositorio = repositorio
         self._libros = libros
 
+
+    @auditar("listar_stock")
     def listar(self) -> List[Stock]:
         return self._repositorio.leer_todos()
 
+    @auditar("buscar_stock")
     def buscar(self, libro_id: int) -> Stock:
         """Devuelve el stock de un libro.
 
@@ -27,6 +30,7 @@ class StockService:
             raise ValueError(f"El libro {libro_id} no tiene stock cargado.")
         return stock
 
+    @auditar("crear_stock")
     def crear(
         self, libro_id: int, cantidad: int, cantidad_minima: int
     ) -> Stock:
@@ -35,6 +39,7 @@ class StockService:
             raise ValueError(f"No existe un libro con id {libro_id}.")
         return self._repositorio.crear(Stock(libro, cantidad, cantidad_minima))
 
+    @auditar("actualizar_stock")
     def actualizar(
         self, libro_id: int, cantidad: int, cantidad_minima: int
     ) -> Stock:
@@ -42,10 +47,12 @@ class StockService:
         nuevo = Stock(stock.libro, cantidad, cantidad_minima)
         return self._repositorio.actualizar(nuevo)
 
+    @auditar("eliminar_stock")
     def eliminar(self, libro_id: int) -> None:
         if not self._repositorio.eliminar(libro_id):
             raise ValueError(f"El libro {libro_id} no tiene stock cargado.")
 
+    @auditar("reponer_stock")
     def reponer(self, libro_id: int, cantidad: int) -> Stock:
         """Suma unidades al stock de un libro, por ejemplo por un pedido.
 
@@ -64,6 +71,7 @@ class StockService:
         )
         return self._repositorio.actualizar(nuevo)
 
+    @auditar("descontar_stock")
     def descontar(self, libro_id: int, cantidad: int) -> Stock:
         """Resta unidades del stock de un libro (por ejemplo por una venta).
 
