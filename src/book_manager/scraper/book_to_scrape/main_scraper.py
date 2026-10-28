@@ -1,7 +1,9 @@
 import os
 import sys
+import threading
 from pathlib import Path
 from typing import Dict, List, Optional
+from scrapy.crawler import CrawlerProcess
 
 RUTA_SCRAPER = Path(__file__).resolve().parent
 RUTA_SRC = Path(__file__).resolve().parents[3]
@@ -156,7 +158,22 @@ def main(
 
     process = CrawlerProcess(settings)
     process.crawl(CuspideSpider, libros=libros_catalogo)
-    process.start()
+
+    exito: list = [None]
+
+    def _correr_spider() -> None:
+        try:
+            process.start(install_signal_handlers=False)
+        except Exception as e:
+            exito[0] = e
+
+    hilo = threading.Thread(target=_correr_spider)
+    hilo.start()
+    hilo.join()
+
+    if isinstance(exito[0], BaseException):
+        raise exito[0]
+
 
     ruta_resultados = Path(
         settings.get("RUTA_ARCHIVO", RUTA_REPORTES / "cuspide_resultados.csv")

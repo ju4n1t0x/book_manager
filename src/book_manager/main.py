@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from book_manager.models.models import crear_tablas
 
 
-RUTA_ENV = Path(__file__).resolve().parents[2] / ".env"
+RUTA_ENV = Path(__file__).resolve().parent / ".env"
 RUTA_MIGRACIONES = Path(__file__).resolve().parent / "migrations"
 
 def main(import_default_data: bool = False) -> None:
