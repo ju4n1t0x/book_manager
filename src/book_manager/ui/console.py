@@ -15,7 +15,9 @@ from book_manager.entities import (
     TipoCotizacion,
 )
 from book_manager.services import ServicioCrud, Servicios
-
+from sqlalchemy import select
+from book_manager.models.models import AuditoriaModelo
+from pathlib import Path
 
 def manejar_errores(funcion: Callable) -> Callable:
     """Decorador que muestra los errores sin cortar el programa."""
@@ -129,6 +131,9 @@ class OpcionPrincipal(IntEnum):
     TIPOS_COTIZACION = 7
     COTIZACIONES = 8
     REPORTES = 9
+    SCRAPING = 10
+    GENERAR_REPORTE = 11
+    AUDITORIA = 12
 
 
 class Consola:
@@ -160,6 +165,9 @@ class Consola:
             print("7. Tipos de cotización")
             print("8. Cotizaciones del dólar")
             print("9. Reportes")
+            print("10. Ejecutar scraping")
+            print("11. Generar reporte")
+            print("12. Ver historial de auditoría")
             print("0. Salir")
             try:
                 opcion = OpcionPrincipal(int(input("Opción: ")))
@@ -186,6 +194,12 @@ class Consola:
                     self._menu_cotizaciones()
                 case OpcionPrincipal.REPORTES:
                     self._menu_reportes()
+                case OpcionPrincipal.SCRAPING:
+                    self._ejecutar_scraping()
+                case OpcionPrincipal.GENERAR_REPORTE:
+                    self._opcion_exportar_precios_excel()
+                case OpcionPrincipal.AUDITORIA:
+                    self._ver_historial_auditoria()    
                 case OpcionPrincipal.SALIR:
                     return
 
@@ -890,7 +904,9 @@ class Consola:
             print(f"Archivo '{nombre_archivo}' exportado correctamente.")
         except IOError as error:
             print(f"No se pudo generar el archivo CSV: {error}")
-
+        
+        
+        
     @manejar_errores
     def _opcion_exportar_precios_excel(self) -> None:
         """Exporta la comparación de precios a un archivo Excel."""
@@ -902,10 +918,15 @@ class Consola:
             print("\nNo se encontraron resultados del scraping de Cúspide.")
             return
 
-        tipo = self._elegir(self._s.tipos_cotizacion, "Tipo de cotización")
+        tipo = self._elegir(
+            self._s.tipos_cotizacion,
+            "Tipo de cotización",
+        )
         diferencia_minima = pedir_decimal("Diferencia mínima en pesos", 0)
 
-        resultados = self._s.alertas_precios.leer_resultados(ruta_resultados)
+        resultados = self._s.alertas_precios.leer_resultados(
+            ruta_resultados
+        )
 
         alertas = self._s.alertas_precios.comparar(
             resultados,
@@ -923,3 +944,49 @@ class Consola:
         )
 
         print(f"\nArchivo Excel generado correctamente: {ruta}")
+    
+    
+    
+    
+    
+    @manejar_errores
+    def _ejecutar_scraping(self) -> None:
+        """Ejecuta el scraping de precios de Cúspide."""
+
+        from book_manager.scraper.book_to_scrape.main_scraper import main
+
+        diferencia_minima = pedir_decimal(
+            "Diferencia mínima de precio en pesos"
+        )
+        tipo = self._elegir(
+            self._s.tipos_cotizacion,
+            "Tipo de cotización",
+        )
+
+        main(diferencia_minima, tipo.id)
+
+
+    @manejar_errores
+    def _ver_historial_auditoria(self) -> None:
+        """Muestra el historial de operaciones auditadas."""
+
+        conexion = self._s.libros._repositorio._conexion
+
+        with conexion.transaccion() as sesion:
+            registros = sesion.scalars(
+                select(AuditoriaModelo).order_by(
+                    AuditoriaModelo.fecha.desc()
+                )
+            ).all()
+
+        if not registros:
+            print("\nNo hay registros de auditoría.")
+            return
+
+        print("\n--- HISTORIAL DE AUDITORÍA ---")
+
+        for registro in registros:
+            print(f"\nAcción: {registro.accion}")
+            print(f"Fecha: {registro.fecha}")
+            print(f"Detalles: {registro.detalles}")
+            print("-" * 50)
