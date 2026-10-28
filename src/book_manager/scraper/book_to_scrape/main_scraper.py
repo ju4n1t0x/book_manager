@@ -1,9 +1,18 @@
 import os
 import sys
-import threading
 from pathlib import Path
 from typing import Dict, List, Optional
-from scrapy.crawler import CrawlerProcess
+import asyncio
+from scrapy.crawler import AsyncCrawlerRunner
+from scrapy.utils.log import configure_logging
+from dotenv import load_dotenv
+from scrapy.settings import Settings
+from book_manager.database.connection import ConexionDB
+from book_manager.repositories.repositories import Repositorios
+from book_manager.services import DolarApi, Servicios
+from book_manager.services.alerta_precio_service import AlertaPrecioService
+from book_manager.ui.console import pedir_decimal, pedir_entero
+from book_to_scrape.spiders.cuspide_spider import CuspideSpider
 
 RUTA_SCRAPER = Path(__file__).resolve().parent
 RUTA_SRC = Path(__file__).resolve().parents[3]
@@ -12,18 +21,6 @@ RUTA_REPORTES = RUTA_SRC / "book_manager" / "reportes"
 
 sys.path.insert(0, str(RUTA_SCRAPER))
 sys.path.insert(0, str(RUTA_SRC))
-
-from dotenv import load_dotenv
-from scrapy.crawler import CrawlerProcess
-from scrapy.settings import Settings
-
-from book_manager.database.connection import ConexionDB
-from book_manager.repositories.repositories import Repositorios
-from book_manager.services import DolarApi, Servicios
-from book_manager.services.alerta_precio_service import AlertaPrecioService
-from book_manager.ui.console import pedir_decimal, pedir_entero
-from book_to_scrape.spiders.cuspide_spider import CuspideSpider
-
 
 def pedir_diferencia_minima() -> float:
     """Pide al usuario la diferencia de precio que dispara una alerta."""
@@ -110,7 +107,7 @@ def generar_alertas(
     return ruta
 
 
-def main(
+async def main_async(
     diferencia_minima: Optional[float] = None,
     tipo_cotizacion_id: Optional[int] = None,
 ) -> Path:
@@ -156,23 +153,14 @@ def main(
     settings = Settings()
     settings.setmodule("book_to_scrape.settings", priority="project")
 
-    process = CrawlerProcess(settings)
-    process.crawl(CuspideSpider, libros=libros_catalogo)
+    configure_logging()
 
-    exito: list = [None]
+    runner = AsyncCrawlerRunner(settings)
 
-    def _correr_spider() -> None:
-        try:
-            process.start(install_signal_handlers=False)
-        except Exception as e:
-            exito[0] = e
-
-    hilo = threading.Thread(target=_correr_spider)
-    hilo.start()
-    hilo.join()
-
-    if isinstance(exito[0], BaseException):
-        raise exito[0]
+    await runner.crawl(
+        CuspideSpider,
+        libros=libros_catalogo
+    )
 
 
     ruta_resultados = Path(
@@ -184,4 +172,4 @@ def main(
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main_async())

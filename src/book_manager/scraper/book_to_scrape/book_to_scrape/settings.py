@@ -14,6 +14,7 @@ BOT_NAME = "book_to_scrape"
 SPIDER_MODULES = ["book_to_scrape.spiders"]
 NEWSPIDER_MODULE = "book_to_scrape.spiders"
 
+
 ADDONS = {}
 
 RUTA_ARCHIVO = Path(__file__).resolve().parents[3] / "reportes" / "cuspide_resultados.csv"
@@ -23,7 +24,7 @@ RUTA_ARCHIVO = Path(__file__).resolve().parents[3] / "reportes" / "cuspide_resul
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
-
+TWISTED_REACTOR = False
 # Concurrency and throttling settings
 CONCURRENT_REQUESTS = 10
 CONCURRENT_REQUESTS_PER_DOMAIN = 1
