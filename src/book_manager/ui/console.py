@@ -953,7 +953,9 @@ class Consola:
     def _ejecutar_scraping(self) -> None:
         """Ejecuta el scraping de precios de Cúspide."""
 
-        from book_manager.scraper.book_to_scrape.main_scraper import main
+        from book_manager.scraper.book_to_scrape.main_scraper import (
+            ejecutar_scraping,
+        )
 
         diferencia_minima = pedir_decimal(
             "Diferencia mínima de precio en pesos"
@@ -963,7 +965,7 @@ class Consola:
             "Tipo de cotización",
         )
 
-        main(diferencia_minima, tipo.id)
+        ejecutar_scraping(diferencia_minima, tipo.id)
 
 
     @manejar_errores

@@ -1,3 +1,4 @@
+import threading
 import os
 import sys
 from pathlib import Path
@@ -12,7 +13,7 @@ from book_manager.repositories.repositories import Repositorios
 from book_manager.services import DolarApi, Servicios
 from book_manager.services.alerta_precio_service import AlertaPrecioService
 from book_manager.ui.console import pedir_decimal, pedir_entero
-from book_to_scrape.spiders.cuspide_spider import CuspideSpider
+
 
 RUTA_SCRAPER = Path(__file__).resolve().parent
 RUTA_SRC = Path(__file__).resolve().parents[3]
@@ -21,6 +22,59 @@ RUTA_REPORTES = RUTA_SRC / "book_manager" / "reportes"
 
 sys.path.insert(0, str(RUTA_SCRAPER))
 sys.path.insert(0, str(RUTA_SRC))
+
+from book_to_scrape.spiders.cuspide_spider import CuspideSpider
+
+def ejecutar_scraping(
+    diferencia_minima: float,
+    tipo_cotizacion_id: int,
+):
+    """
+    Ejecuta el scraper de forma síncrona para la aplicación.
+
+    Si Colab ya tiene un event loop activo, ejecuta Scrapy
+    dentro de un hilo con su propio event loop.
+    """
+
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        # Ejecución normal fuera de Colab.
+        return asyncio.run(
+            main_async(
+                diferencia_minima,
+                tipo_cotizacion_id,
+            )
+        )
+
+    resultado = []
+    errores = []
+
+    def ejecutar_en_hilo():
+        try:
+            resultado.append(
+                asyncio.run(
+                    main_async(
+                        diferencia_minima,
+                        tipo_cotizacion_id,
+                    )
+                )
+            )
+        except BaseException as error:
+            errores.append(error)
+
+    hilo = threading.Thread(
+        target=ejecutar_en_hilo,
+        name="scrapy-colab",
+    )
+
+    hilo.start()
+    hilo.join()
+
+    if errores:
+        raise errores[0]
+
+    return resultado[0]
 
 def pedir_diferencia_minima() -> float:
     """Pide al usuario la diferencia de precio que dispara una alerta."""
@@ -170,6 +224,3 @@ async def main_async(
         url, ruta_resultados, diferencia_minima, tipo_cotizacion_id
     )
 
-
-if __name__ == "__main__":
-    asyncio.run(main_async())

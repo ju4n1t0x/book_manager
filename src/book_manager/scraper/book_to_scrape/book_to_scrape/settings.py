@@ -24,7 +24,7 @@ RUTA_ARCHIVO = Path(__file__).resolve().parents[3] / "reportes" / "cuspide_resul
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
-TWISTED_REACTOR = False
+TWISTED_REACTOR_ENABLED = False
 # Concurrency and throttling settings
 CONCURRENT_REQUESTS = 10
 CONCURRENT_REQUESTS_PER_DOMAIN = 1
