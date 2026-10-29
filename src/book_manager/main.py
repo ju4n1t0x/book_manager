@@ -39,9 +39,10 @@ def main(import_default_data: bool = False) -> None:
                          f"no está definida en el archivo .env.")
 
     conexion = ConexionDB(url)
-    crear_tablas(conexion.engine)
-   
+    
     try:
+        conexion.connect()
+        crear_tablas(conexion.engine)
         repositorios = Repositorios(conexion)
         servicios = Servicios(repositorios, DolarApi())
         Consola(servicios).iniciar()
