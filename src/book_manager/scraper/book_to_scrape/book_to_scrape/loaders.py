@@ -15,7 +15,8 @@ def limpiar_texto(texto: str | None) -> str | None:
     return texto_limpio or None
 
 def parse_precio(valor: str | None) -> float | None:
-    """Extrae el precio de un libro eliminando el símbolo de moneda y espacios en blanco.
+    """Extrae el precio de un libro eliminando el símbolo de moneda y
+    espacios en blanco.
     Convierte '$ 15.999,00 -> 15999.00
     """
 

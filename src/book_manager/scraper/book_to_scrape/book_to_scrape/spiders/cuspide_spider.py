@@ -1,14 +1,19 @@
 import re
 import unicodedata
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 import scrapy
 from urllib.parse import quote_plus
 
+from scrapy.http import Response
+
+from ..items import BookToScrapeItem
 from ..loaders import CuspideLoader
 
 
 URL_BASE = "https://cuspide.com/"
 
-def normalizar_texto(texto: str) ->list[str]:
+def normalizar_texto(texto: str) -> list[str]:
     """Normaliza el texto eliminando acentos y caracteres especiales."""
     texto = texto.replace("¥", "ñ").casefold()
     texto = unicodedata.normalize("NFKD", texto)
@@ -20,7 +25,8 @@ def normalizar_texto(texto: str) ->list[str]:
     return re.findall(r"[a-z0-9]+", texto)
 
 def comparar_titulo(titulo_catalogo: str, titulo_producto: str) -> bool:
-    """Compara dos títulos de libros normalizados y devuelve True si son iguales."""
+    """Compara dos títulos de libros normalizados y devuelve True si son
+    iguales."""
 
     esperado = normalizar_texto(titulo_catalogo)
     encontrado = normalizar_texto(titulo_producto)
@@ -35,7 +41,8 @@ def comparar_titulo(titulo_catalogo: str, titulo_producto: str) -> bool:
     ) 
 
 def comparar_autor(autor_catalogo: str, autor_libro: str) -> bool:
-    """Compara dos nombres de autores normalizados y devuelve True si son iguales."""
+    """Compara dos nombres de autores normalizados y devuelve True si son
+    iguales."""
 
     esperado = set(normalizar_texto(autor_catalogo))
     encontrado = set(normalizar_texto(autor_libro))
@@ -51,7 +58,14 @@ class CuspideSpider(scrapy.Spider):
     MAX_RESULTADOS = 10
 
 
-    def __init__(self,libros=None, titulo=None, autor=None, *args, **kwargs):
+    def __init__(
+        self,
+        libros: list[dict[str, str]] | None = None,
+        titulo: str | None = None,
+        autor: str | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(*args, **kwargs)
 
         if libros is None and titulo and autor:
@@ -60,9 +74,11 @@ class CuspideSpider(scrapy.Spider):
         self.libros = libros or []
 
 
-    async def start(self):
+    async def start(self) -> AsyncIterator[scrapy.Request]:
         if not self.libros:
-            self.logger.error("No se proporcionaron títulos de libros para buscar.")
+            self.logger.error(
+                "No se proporcionaron títulos de libros para buscar."
+            )
             return
 
         for libro in self.libros:
@@ -80,8 +96,11 @@ class CuspideSpider(scrapy.Spider):
                     },
             )
 
-    def parse(self, response):
-        """Toma solo los primeros 10 resultados de la busqueda y extrae los datos de cada libro."""
+    def parse(
+        self, response: Response
+    ) -> Iterator[scrapy.Request | BookToScrapeItem]:
+        """Toma solo los primeros 10 resultados de la busqueda y extrae
+        los datos de cada libro."""
 
         
         vistos = set()
@@ -116,7 +135,9 @@ class CuspideSpider(scrapy.Spider):
                 break
 
 
-    def parse_producto(self, response):
+    def parse_producto(
+        self, response: Response
+    ) -> Iterator[BookToScrapeItem]:
         """Conservamos los candidatos cuyo titulo y autor coinciden."""
 
         titulo_producto = (

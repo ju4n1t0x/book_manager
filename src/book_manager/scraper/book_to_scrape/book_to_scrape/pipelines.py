@@ -9,7 +9,10 @@ import csv
 
 from pathlib import Path
 from itemadapter import ItemAdapter
+from scrapy.crawler import Crawler
 from scrapy.exceptions import DropItem
+
+from .items import BookToScrapeItem
 
 class PipelineValidacion:
 
@@ -22,7 +25,7 @@ class PipelineValidacion:
         "titulo_producto"
     )
 
-    def process_item(self, item):
+    def process_item(self, item: BookToScrapeItem) -> BookToScrapeItem:
         """Valida que los campos obligatorios estén presentes en el item."""
         adapter = ItemAdapter(item)
 
@@ -49,11 +52,11 @@ class PipelineCsv:
         "autor_libro"
     )
 
-    def __init__(self, ruta_archivo):
+    def __init__(self, ruta_archivo: str | Path) -> None:
         self.ruta_archivo = ruta_archivo
 
     @classmethod
-    def from_crawler(cls, crawler):
+    def from_crawler(cls, crawler: Crawler) -> "PipelineCsv":
         return cls(
             ruta_archivo=crawler.settings.get(
                 "RUTA_ARCHIVO",
@@ -61,17 +64,19 @@ class PipelineCsv:
             )
         )
     
-    def open_spider(self):
+    def open_spider(self) -> None:
         ruta = Path(self.ruta_archivo)
         ruta.parent.mkdir(parents=True, exist_ok=True)
-        self.archivo = open(self.ruta_archivo, "w", newline="", encoding="utf-8")
+        self.archivo = open(
+            self.ruta_archivo, "w", newline="", encoding="utf-8"
+        )
         self.writer = csv.DictWriter(self.archivo, fieldnames=self.CAMPOS)
         self.writer.writeheader()
 
-    def close_spider(self):
+    def close_spider(self) -> None:
         self.archivo.close()
 
-    def process_item(self, item):
+    def process_item(self, item: BookToScrapeItem) -> BookToScrapeItem:
         self.writer.writerow(ItemAdapter(item).asdict())
         return item
     

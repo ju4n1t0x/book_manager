@@ -1,6 +1,16 @@
 # CHANGELOG
 
+## [Ejercicio 8]
+
+- Agregamos correcciones del Sprint_2
+- Terminamos de corregir los type hints y el pep8 solicitado
+
+## [Ejercicio 7]
+
+- Agregamos al menu las opciones de `ejecutar scraping`, `generar reporte` y `ver mi historial de auditoria`
+
 ## [Ejercicio 6]
+
 - Incorporamos un decorador para registrar las operaciones del sistema en la tabla de auditoría, almacenando la acción, la fecha y los detalles de cada operación.
 
 ## [Ejercicio 5]
